@@ -6,7 +6,7 @@
   3. Open the new folder, right click inside. Select "Git bash here" on the drop down.
 
 #### For future weeks.
-  1. After week 1, ignore #1-3. Go into the eat-blog folder on your desktop instead, open git bash by right clicking and selecting "git bash here".
+  1. After week 1, ignore #1-3 of "Initial setup". Go into the eat-blog folder on your desktop instead, open git bash by right clicking and selecting "git bash here".
   2. In the cli, type "git clone https://github.com/CSUN-SeniorDesign/eat-blog.git" then enter.
   3. Open the new eat-blog folder assuming the command runs successfully.
   4. Open the folder for this week's blogs. Inside, right click, add a new file "weekx-lastname.md" i.e. "week1-kluszczynski.md".
