@@ -67,7 +67,7 @@ https://drive.google.com/open?id=1wFu8gD9bwHWJW-d0jTI2YddG5XBj5Hq3
 3. Zip the **contents** of the public folder with a .zip extension. Don't zip the folder itself or you'll make more work for yourself.
 4. Open git bash (right click, git bash here) wherever your key file is (pem not ppk file).
 5. Run "scp -r -i 'name of keyfile.pem' ../Desktop/zipfilename.zip ubuntu@fa480.club:~/" in git bash. (Assuming your zip file of the public file is located on your desktop).
-7. Go onto the aws ssh terminal.
+6. Go onto the aws ssh terminal.
 
 ##### Finishing from the AWS Terminal.
 1. Run "cd /~". You should be able to see the zip file you copied if you run "ls".
@@ -76,8 +76,8 @@ https://drive.google.com/open?id=1wFu8gD9bwHWJW-d0jTI2YddG5XBj5Hq3
 4. Run "cd /var/www/html." This takes you to the main site directory.
 5. Run "sudo rm -rf \*". **This will delete the site at fa480.club.**
 6. Run "cd /~" again . You should be able to see the zip file again.
-6. Run "sudo mv blog.zip /var/www/blog". This moves the zip file to the blog folder. Navigate to the blog folder again with "cd /var/www/blog."
-6. Run "sudo unzip blog.zip". This will unzip the contents of the public folder.
-7. Run "sudo mv blog.zip /var/www/html". This will move the blog.zip to the html site, where it needs to be copied (until we have a different homepage). Navigate to the html folder again with "cd /var/www/html."
-9. Run "sudo unzip blog.zip" again.
-10. Run "sudo rm blog.zip" to delete the zip file.
+7. Run "sudo mv blog.zip /var/www/blog". This moves the zip file to the blog folder. Navigate to the blog folder again with "cd /var/www/blog."
+8. Run "sudo unzip blog.zip". This will unzip the contents of the public folder.
+9. Run "sudo mv blog.zip /var/www/html". This will move the blog.zip to the html site, where it needs to be copied (until we have a different homepage). Navigate to the html folder again with "cd /var/www/html."
+10. Run "sudo unzip blog.zip" again.
+11. Run "sudo rm blog.zip" to delete the zip file.
