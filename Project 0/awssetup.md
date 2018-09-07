@@ -1,0 +1,3 @@
+# AWS Setup
+
+ Our organization consists of Tyler, Erik, Alex and Brian. At first a couple of us had issues with setting up our aws account we had to reset the credentials that our current aws accounts had back to $100 dollars. We decided to use Tyler’s account as the main one and we have all joined the same organization. We chose to run our instance on the Oregon servers due to the lower prices and 3 availability zones. The organization was set up by Thursday of the first week. Tyler then created IAM accounts with all of them having administrator access. Only the root account has billing permissions
