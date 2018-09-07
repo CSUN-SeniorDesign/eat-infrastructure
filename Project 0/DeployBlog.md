@@ -6,7 +6,7 @@
 3. Unpack hugo_0.48_Windows-64bit.zip to your bin folder under C:\Hugo\bin.
 4. Open your cmd and navigate to your hugo folder.
        cd C:\Hugo
-5. When inside the Hugo folder, type "hugo version" and it should return a message similar to this: <br>
+5. When inside the Hugo folder, type "hugo version" and it should return a message similar to this:
 
         C:\Hugo>hugo version
         Hugo Static Site Generator v0.48 windows/amd64 BuildDate: 2018-08-29T06:35:13Z
@@ -61,12 +61,23 @@ https://drive.google.com/open?id=1wFu8gD9bwHWJW-d0jTI2YddG5XBj5Hq3
         Web Server is available at //localhost:1313/ (bind address 127.0.0.1)
         Press Ctrl+C to stop
 
-##### How to upload from your machine onto our site
-1. Open git bash <right click, git bash here> wherever your key file is (pem not ppk file)
-2. Run 'scp -r -i 'name of keyfile.pem' ../Desktop/zipfilename.zip ubuntu@fa480.club:~/'<br>
-  a. Assuming your zip file is located on your desktop
-3. Go onto the aws ssh terminal,<br>
-  a. Run Cd /~<br>
-  b. Run Sudo Mv blog.zip /var/www/blog<br>
-  c. Run Cd /var/www/blog (this is also cloned to /var/www/html for now)<br>
-  d. Run Sudo Unzip blog.zip
+##### How to upload from your machine onto our site.
+1. After all blogs have been finished for the week, add them to the hugo site directory for blogs.
+2. After that, open your cmd (not git bash) and run "hugo" inside the hugo site folder. It should generate a public folder.
+3. Zip the **contents** of the public folder with a .zip extension. Don't zip the folder itself or you'll make more work for yourself.
+4. Open git bash (right click, git bash here) wherever your key file is (pem not ppk file).
+5. Run "scp -r -i 'name of keyfile.pem' ../Desktop/zipfilename.zip ubuntu@fa480.club:~/" in git bash. (Assuming your zip file of the public file is located on your desktop).
+7. Go onto the aws ssh terminal.
+
+##### Finishing from the AWS Terminal.
+1. Run "cd /~". You should be able to see the zip file you copied if you run "ls".
+2. Run "cd /var/www/blog". This takes you to the blog directory.
+3. Run "sudo rm -rf \*". **This will delete the site at blog.fa480.club.**
+4. Run "cd /var/www/html." This takes you to the main site directory.
+5. Run "sudo rm -rf \*". **This will delete the site at fa480.club.**
+6. Run "cd /~" again . You should be able to see the zip file again.
+6. Run "sudo mv blog.zip /var/www/blog". This moves the zip file to the blog folder. Navigate to the blog folder again with "cd /var/www/blog."
+6. Run "sudo unzip blog.zip". This will unzip the contents of the public folder.
+7. Run "sudo mv blog.zip /var/www/html". This will move the blog.zip to the html site, where it needs to be copied (until we have a different homepage). Navigate to the html folder again with "cd /var/www/html."
+9. Run "sudo unzip blog.zip" again.
+10. Run "sudo rm blog.zip" to delete the zip file.
