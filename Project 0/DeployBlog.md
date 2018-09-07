@@ -70,12 +70,12 @@ https://drive.google.com/open?id=1wFu8gD9bwHWJW-d0jTI2YddG5XBj5Hq3
 6. Go onto the aws ssh terminal.
 
 ##### Finishing from the AWS Terminal.
-1. Run "cd /~". You should be able to see the zip file you copied if you run "ls".
+1. Run "cd ~/". You should be able to see the zip file you copied if you run "ls".
 2. Run "cd /var/www/blog". This takes you to the blog directory.
 3. Run "sudo rm -rf \*". **This will delete the site at blog.fa480.club.**
 4. Run "cd /var/www/html." This takes you to the main site directory.
 5. Run "sudo rm -rf \*". **This will delete the site at fa480.club.**
-6. Run "cd /~" again . You should be able to see the zip file again.
+6. Run "cd ~/" again . You should be able to see the zip file again.
 7. Run "sudo mv blog.zip /var/www/blog". This moves the zip file to the blog folder. Navigate to the blog folder again with "cd /var/www/blog."
 8. Run "sudo unzip blog.zip". This will unzip the contents of the public folder.
 9. Run "sudo mv blog.zip /var/www/html". This will move the blog.zip to the html site, where it needs to be copied (until we have a different homepage). Navigate to the html folder again with "cd /var/www/html."
