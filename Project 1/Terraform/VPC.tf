@@ -1,76 +1,29 @@
-resource "aws_vpc" "main" {
-  cidr_block       = "172.31.0.0/16"
-  instance_tenancy = "default"
-
-  tags {
-    Name = "main"
-  }
+provider "aws" {
+  region = "us-west-2"
 }
 
-resource "aws_subnet" "privsubnet1" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "172.31.32.0/19"
-  availability_zone       = "us-west-2a"
+data "aws_ami" "AmazonLinuxNAT" {
+  most_recent = true
 
-  tags {
-    Name = "Privsubnet1"
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
   }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
 }
 
-resource "aws_subnet" "privsubnet2" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "172.31.64.0/19"
-  availability_zone       = "us-west-2b"
+resource "aws_instance" "web" {
+  ami           = "ami-40d1f038"
+  instance_type = "t2.micro"
 
   tags {
-    Name = "Privsubnet2"
-  }
-}
-
-resource "aws_subnet" "privsubnet3" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "172.31.96.0/19"
-  availability_zone       = "us-west-2c"
-
-  tags {
-    Name = "Privsubnet3"
-  }
-}
-
-resource "aws_subnet" "pubsubnet1" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "172.31.128.0/19"
-  availability_zone       = "us-west-2a"
-
-  tags {
-    Name = "Pubsubnet1"
-  }
-}
-
-resource "aws_subnet" "pubsubnet2" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "172.31.160.0/19"
-  availability_zone       = "us-west-2b"
-
-  tags {
-    Name = "Pubsubnet2"
-  }
-}
-
-resource "aws_subnet" "pubsubnet3" {
-  vpc_id     = "${aws_vpc.main.id}"
-  cidr_block = "172.31.192.0/19"
-  availability_zone       = "us-west-2c"
-
-  tags {
-    Name = "Pubsubnet3"
-  }
-}
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = "${aws_vpc.main.id}"
-
-  tags {
-    Name = "main"
+    Name = "NAT Instance"
   }
 }
