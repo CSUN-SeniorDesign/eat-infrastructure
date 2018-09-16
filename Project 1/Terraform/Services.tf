@@ -8,6 +8,91 @@ resource "aws_lb" "Load-Balancer"{
   subnets            = ["${aws_subnet.pubsubnet1.id}","${aws_subnet.pubsubnet2.id}","${aws_subnet.pubsubnet3.id}"]
 }
 
+resource "aws_alb_listener" "HTTP-Listener"{
+	load_balancer_arn = "${aws_lb.Load-Balancer.id}"
+	port = 80
+	default_action {
+		type = "forward"
+		target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}" 
+	}
+}
+
+resource "aws_alb_target_group" "HTTP-Group" {
+  name     = "WS-Group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "${aws_vpc.main.id}"
+}
+
+
+/*
+Do this after certs are up.
+
+resource "aws_alb_listener" "HTTPS-Listener"{
+	load_balancer_arn = "${aws_lb.Load-Balancer.id}"
+	port = 443
+	ssl_policy = "ELBSecurityPolicy-2016-08"
+	certificate_arn = "{aws_acm_certificate.cert.certificate_arn}"
+	default_action {
+		type = "forward"
+		target_group_arn = "${aws_alb_target_group.TSL-Group.arn}" 
+	}
+}
+
+*/
+
+
+
+/*
+Do this when both instances are working
+
+resource "aws_lb_target_group_attachment" "HTTP-attachment-1" {
+  target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
+  target_id        = "${aws_instance.instance1.id}"
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "HTTP-attachment-2" {
+  target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
+  target_id        = "${aws_instance.instance2.id}"
+  port             = 80
+  
+resource "aws_lb_target_group_attachment" "HTTPS-attachment-1" {
+  target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
+  target_id        = "${aws_instance.instance1.id}"
+  port             = 443
+}
+
+resource "aws_lb_target_group_attachment" "HTTPS-attachment-2" {
+  target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
+  target_id        = "${aws_instance2.instance2.id}"
+  port             = 443  
+  
+}
+
+Do this when we get certs working:
+
+resource "aws_alb_target_group" "TSL-Group" {
+  name     = "TSL-Group"
+  port     = 443
+  protocol = "HTTPS"
+  vpc_id   = "${aws_vpc.main.id}"
+}
+
+resource "aws_acm_certificate" "cert" {
+	domain_name = "fa480.club"
+	subject_alternative_names = ["www.fa480.club", "blog.fa480.club"]
+	validation_method = "EMAIL"
+}
+
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn = "${aws_acm_certificate.cert.arn}"
+  validation_record_fqdns = ["${aws_route53_record.cert_validation.fqdn}"]
+}
+
+*/
+
+
 resource "aws_route53_zone" "main" {
   name         = "fa480.club"
 }
@@ -23,3 +108,6 @@ resource "aws_route53_record" "www" {
   ttl     = "300"
   records = ["10.0.0.1"]
 }
+
+
+
