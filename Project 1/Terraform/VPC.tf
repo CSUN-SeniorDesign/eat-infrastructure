@@ -123,9 +123,10 @@ resource "aws_route_table_association" "pub3" {
 
 resource "aws_route_table" "private"{
   vpc_id = "${aws_vpc.main.id}"
-	// route[ 
-	//Add CIDR block for nat instance here
-	// ]
+  //route{
+  //  cidr_block = "0.0.0.0/0"
+  //  instance_id = "${}" - add instance ID here once security group is done.
+  //}
   tags {
 		Name = "Private Route Table"
   }
