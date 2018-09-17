@@ -32,8 +32,9 @@ resource "aws_iam_group_membership" "EAT-Membership" {
   users = [
     "${aws_iam_user.Alex.name}",
     "${aws_iam_user.Erik.name}",
-	"${aws_iam_user.Brian.name}",
-	"${aws_iam_user.TK.name}",
+   	"${aws_iam_user.Brian.name}",
+	  "${aws_iam_user.TK.name}",
+    "${aws_iam_user.Shahid.name}"
   ]
 
   group = "${aws_iam_group.Eat-Team.name}"

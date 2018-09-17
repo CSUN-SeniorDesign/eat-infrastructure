@@ -8,6 +8,8 @@ resource "aws_lb" "Load-Balancer"{
   subnets            = ["${aws_subnet.pubsubnet1.id}","${aws_subnet.pubsubnet2.id}","${aws_subnet.pubsubnet3.id}"]
 }
 
+
+/*
 resource "aws_alb_listener" "HTTP-Listener"{
 	load_balancer_arn = "${aws_lb.Load-Balancer.id}"
 	port = 80
@@ -25,7 +27,6 @@ resource "aws_alb_target_group" "HTTP-Group" {
 }
 
 
-/*
 Do this after certs are up.
 
 resource "aws_alb_listener" "HTTPS-Listener"{
@@ -39,33 +40,29 @@ resource "aws_alb_listener" "HTTPS-Listener"{
 	}
 }
 
-*/
 
-
-
-/*
-Do this when both instances are working
 
 resource "aws_lb_target_group_attachment" "HTTP-attachment-1" {
   target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
-  target_id        = "${aws_instance.instance1.id}"
+  target_id        = "${aws_instance.web.id}"
   port             = 80
 }
 
 resource "aws_lb_target_group_attachment" "HTTP-attachment-2" {
   target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
-  target_id        = "${aws_instance.instance2.id}"
+  target_id        = "${aws_instance.web2.id}"
   port             = 80
+}
 
 resource "aws_lb_target_group_attachment" "HTTPS-attachment-1" {
   target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
-  target_id        = "${aws_instance.instance1.id}"
+  target_id        = "${aws_instance.web.id}"
   port             = 443
 }
 
 resource "aws_lb_target_group_attachment" "HTTPS-attachment-2" {
   target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
-  target_id        = "${aws_instance.instance2.id}"
+  target_id        = "${aws_instance.web2.id}"
   port             = 443
 
 }

@@ -99,10 +99,10 @@ resource "aws_route_table_association" "pub3" {
 
 resource "aws_route_table" "private"{
   vpc_id = "${aws_vpc.main.id}"
-  //route{
-  //  cidr_block = "0.0.0.0/0"
-  //  instance_id = "${}" - add instance ID here once security group is done.
-  //}
+  route{
+    cidr_block = "0.0.0.0/0"
+    instance_id = "${aws_instance.NAT.id}"
+  }
   tags {
 		Name = "Private Route Table"
   }
@@ -123,31 +123,21 @@ resource "aws_route_table_association" "priv3" {
   route_table_id = "${aws_route_table.private.id}"
 }
 
-
-
-data "aws_ami" "AmazonLinuxNAT" {
-  most_recent = true
-
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+resource "aws_instance" "NAT" {
+  ami           = "ami-40d1f038"
+  instance_type = "t2.micro"
+  subnet_id = "${aws_subnet.pubsubnet1.id}"
+  associate_public_ip_address = true
+  vpc_security_group_ids = ["${aws_security_group.NATSG.id}"]
+  tags {
+    Name = "NAT Instance"
   }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
 }
 
-
-resource "aws_security_group" "NAT_SG_Rules" {
+resource "aws_security_group" "NATSG" {
   name        = "NATSG"
   description = "NAT_security_group"
-  vpc_id      = "vpc-0b273ffb040f22319"
-
+  vpc_id      = "${aws_vpc.main.id}"
   ingress {
   description = "Allow inbound HTTP traffic from servers in the private subnet"
      from_port   = 80
@@ -169,8 +159,16 @@ resource "aws_security_group" "NAT_SG_Rules" {
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
-      cidr_blocks = ["172.31.128.0/19"]
+      cidr_blocks = ["0.0.0.0/0"]
      }
+
+		 egress {
+	   description = "Allow outbound SSH access to the NAT instance from anywhere (over the Internet gateway)"
+	       from_port   = 22
+	       to_port     = 22
+	       protocol    = "tcp"
+	       cidr_blocks = ["0.0.0.0/0"]
+	      }
 
   egress {
   description = "Allow outbound HTTP access to the Internet"
@@ -190,6 +188,6 @@ resource "aws_security_group" "NAT_SG_Rules" {
  }
 
  resource "aws_eip" "lb" {
-   instance = "i-067add47de25e0088"
+   instance = "${aws_instance.NAT.id}"
    vpc      = true
  }
