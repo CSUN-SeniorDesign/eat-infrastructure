@@ -22,6 +22,10 @@ resource "aws_iam_user" "Brian"{
   name = "Brian"
 }
 
+resource "aws_iam_user" "Shahid"{
+  name = "Shahid"
+}
+
 resource "aws_iam_group_membership" "EAT-Membership" {
   name = "Adding-members-to-EAT"
 
