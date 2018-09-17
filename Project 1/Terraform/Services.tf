@@ -65,7 +65,7 @@ resource "aws_lb_target_group_attachment" "HTTPS-attachment-1" {
 
 resource "aws_lb_target_group_attachment" "HTTPS-attachment-2" {
   target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
-  target_id        = "${aws_instance2.instance2.id}"
+  target_id        = "${aws_instance.instance2.id}"
   port             = 443
 
 }
@@ -113,7 +113,7 @@ resource "aws_route53_record" "www" {
 # Create a new instance of the latest Ubuntu Server on an
 # t2.micro node with an AWS Tag naming it "Blog Server 2"
 
-data "aws_ami" "ubuntu_server" {
+data "aws_ami" "ubuntu_server2" {
   most_recent = true
 
   filter {
@@ -129,7 +129,7 @@ data "aws_ami" "ubuntu_server" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "web2" {
   ami           = "ami-51537029"
   instance_type = "t2.micro"
 
