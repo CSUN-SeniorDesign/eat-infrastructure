@@ -4,7 +4,7 @@ resource "aws_lb" "Load-Balancer"{
   load_balancer_type = "application"
 
   enable_deletion_protection = false
-  
+
   subnets            = ["${aws_subnet.pubsubnet1.id}","${aws_subnet.pubsubnet2.id}","${aws_subnet.pubsubnet3.id}"]
 }
 
@@ -13,7 +13,7 @@ resource "aws_alb_listener" "HTTP-Listener"{
 	port = 80
 	default_action {
 		type = "forward"
-		target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}" 
+		target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
 	}
 }
 
@@ -35,7 +35,7 @@ resource "aws_alb_listener" "HTTPS-Listener"{
 	certificate_arn = "{aws_acm_certificate.cert.certificate_arn}"
 	default_action {
 		type = "forward"
-		target_group_arn = "${aws_alb_target_group.TSL-Group.arn}" 
+		target_group_arn = "${aws_alb_target_group.TSL-Group.arn}"
 	}
 }
 
@@ -56,7 +56,7 @@ resource "aws_lb_target_group_attachment" "HTTP-attachment-2" {
   target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
   target_id        = "${aws_instance.instance2.id}"
   port             = 80
-  
+
 resource "aws_lb_target_group_attachment" "HTTPS-attachment-1" {
   target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
   target_id        = "${aws_instance.instance1.id}"
@@ -66,8 +66,8 @@ resource "aws_lb_target_group_attachment" "HTTPS-attachment-1" {
 resource "aws_lb_target_group_attachment" "HTTPS-attachment-2" {
   target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
   target_id        = "${aws_instance2.instance2.id}"
-  port             = 443  
-  
+  port             = 443
+
 }
 
 Do this when we get certs working:
@@ -110,4 +110,61 @@ resource "aws_route53_record" "www" {
 }
 
 
+# Create a new instance of the latest Ubuntu Server on an
+# t2.micro node with an AWS Tag naming it "Blog Server 2"
 
+data "aws_ami" "ubuntu_server" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+resource "aws_instance" "web" {
+  ami           = "ami-51537029"
+  instance_type = "t2.micro"
+
+  tags {
+    Name = "Blog Server 2"
+  }
+}
+
+
+# Create a new instance of the latest Ubuntu Server on an
+# t2.micro node with an AWS Tag naming it "Blog Server 1"
+
+
+data "aws_ami" "ubuntu_server" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+
+resource "aws_instance" "web" {
+  ami           = "ami-51537029"
+  instance_type = "t2.micro"
+
+  tags {
+    Name = "Blog Server 1"
+  }
+}
