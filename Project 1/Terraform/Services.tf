@@ -129,7 +129,9 @@ data "aws_ami" "ubuntu_server2" {
 resource "aws_instance" "web2" {
   ami           = "ami-51537029"
   instance_type = "t2.micro"
-
+  key_name = "${aws_key_pair.deployer.key_name}"
+  vpc_security_group_ids = ["${aws_security_group.BlogSG.id}"]
+  subnet_id = "${aws_subnet.privsubnet1.id}"
   tags {
     Name = "Blog Server 2"
   }
@@ -160,8 +162,15 @@ data "aws_ami" "ubuntu_server" {
 resource "aws_instance" "web" {
   ami           = "ami-51537029"
   instance_type = "t2.micro"
-
+  key_name = "${aws_key_pair.deployer.key_name}"
+  vpc_security_group_ids = ["${aws_security_group.BlogSG.id}"]
+  subnet_id = "${aws_subnet.privsubnet1.id}"
   tags {
     Name = "Blog Server 1"
   }
 }
+
+resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArVp0Hlbm4c6YyqR++WIhaNTr32I+DGWP8uBvbyc38PNcfjYTYYywOn9fn5wJSHL4vJ5dexN/1SM7tNQI9kZ7Z7khz6FDdXDJ+SW9ZkAUx8oGjGIqyDsUU67YqVIZ8wlY03U+82NAYA6EmpfE1UuwSsMUKqoPW1M0QHGXkBhgNCiIv7Q08NI8314KFQwVml4bkE+D6eFYKYYizgnvIZqciMl8sOZMJEtZ/RzZ/LV0woFHY/YJkCMt0laAVnFHqJRGGYAJsc4PbyC29vTZz7jVs5zy9JCuWbRZ+k5fPyH3JqOUD5VEOcaX2WobeweixFsuXW44zaROJN7E65L85lbHSQ== rsa-key-20180918"
+  }

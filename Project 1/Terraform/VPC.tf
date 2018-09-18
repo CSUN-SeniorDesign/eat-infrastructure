@@ -129,9 +129,24 @@ resource "aws_instance" "NAT" {
   subnet_id = "${aws_subnet.pubsubnet1.id}"
   associate_public_ip_address = true
   vpc_security_group_ids = ["${aws_security_group.NATSG.id}"]
+	key_name = "${aws_key_pair.deployer.key_name}"
   tags {
     Name = "NAT Instance"
   }
+}
+
+resource "aws_security_group" "BlogSG"{
+  name = "BlogSG"
+	description = "Blog security group"
+	vpc_id = "${aws_vpc.main.id}"
+	ingress {
+    description = "Allow SSH traffic"
+		from_port = 22
+		to_port = 22
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}
+
 }
 
 resource "aws_security_group" "NATSG" {
