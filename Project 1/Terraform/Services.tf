@@ -75,20 +75,13 @@ resource "aws_alb_target_group" "TSL-Group" {
   protocol = "HTTPS"
   vpc_id   = "${aws_vpc.main.id}"
 }
-
+*/
+	
 resource "aws_acm_certificate" "cert" {
 	domain_name = "fa480.club"
 	subject_alternative_names = ["www.fa480.club", "blog.fa480.club"]
-	validation_method = "EMAIL"
+	validation_method = "DNS"
 }
-
-resource "aws_acm_certificate_validation" "cert" {
-  certificate_arn = "${aws_acm_certificate.cert.arn}"
-  validation_record_fqdns = ["${aws_route53_record.cert_validation.fqdn}"]
-}
-
-*/
-
 
 resource "aws_route53_zone" "main" {
   name         = "fa480.club"
