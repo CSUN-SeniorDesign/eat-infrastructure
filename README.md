@@ -8,3 +8,4 @@ Infrastructure will be updated here when required by project specifications. Eac
 * Alexander Enaceanu
 * Tyler Kluszczynski
 * Brian Sandoval
+* Shahid Karim
