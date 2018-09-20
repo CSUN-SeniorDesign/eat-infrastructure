@@ -76,10 +76,10 @@ resource "aws_alb_target_group" "TSL-Group" {
   vpc_id   = "${aws_vpc.main.id}"
 }
 */
-	
+
 resource "aws_acm_certificate" "cert" {
 	domain_name = "fa480.club"
-	subject_alternative_names = ["www.fa480.club", "blog.fa480.club"]
+	subject_alternative_names = ["*.fa480.club"]
 	validation_method = "DNS"
 }
 
@@ -87,18 +87,28 @@ resource "aws_route53_zone" "main" {
   name         = "fa480.club"
 }
 
-resource "aws_route53_zone" "blog" {
-  name         = "blog.fa480.club"
-}
-
 resource "aws_route53_record" "www" {
   zone_id = "${aws_route53_zone.main.zone_id}"
   name    = "www.fa480.club"
   type    = "A"
   ttl     = "300"
-  records = ["10.0.0.1"]
+  records = ["${aws_eip.lb.public_ip}"]
+}
+resource "aws_route53_record" "blog" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "blog.fa480.club"
+  type    = "A"
+  ttl     = "300"
+  records = ["${aws_eip.lb.public_ip}"]
 }
 
+resource "aws_route53_record" "apex" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "fa480.club"
+  type    = "A"
+  ttl     = "300"
+  records = ["${aws_eip.lb.public_ip}"]
+}
 
 # Create a new instance of the latest Ubuntu Server on an
 # t2.micro node with an AWS Tag naming it "Blog Server 2"
