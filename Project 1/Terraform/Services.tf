@@ -8,11 +8,25 @@ resource "aws_lb" "Load-Balancer"{
   subnets            = ["${aws_subnet.pubsubnet1.id}","${aws_subnet.pubsubnet2.id}","${aws_subnet.pubsubnet3.id}"]
 }
 
-
-/*
 resource "aws_alb_listener" "HTTP-Listener"{
 	load_balancer_arn = "${aws_lb.Load-Balancer.id}"
 	port = 80
+	default_action {
+		type = "redirect"
+    redirect {
+      port = "443"
+      protocol = "HTTPS"
+      status_code = "HTTP_301"
+    }
+	}
+}
+
+resource "aws_alb_listener" "HTTPS-Listener"{
+	load_balancer_arn = "${aws_lb.Load-Balancer.id}"
+	port = "443"
+  protocol = "HTTPS"
+	ssl_policy = "ELBSecurityPolicy-2016-08"
+	certificate_arn = "${aws_acm_certificate.cert.arn}"
 	default_action {
 		type = "forward"
 		target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
@@ -20,62 +34,25 @@ resource "aws_alb_listener" "HTTP-Listener"{
 }
 
 resource "aws_alb_target_group" "HTTP-Group" {
-  name     = "WS-Group"
+  name     = "HTTP-Group"
   port     = 80
   protocol = "HTTP"
   vpc_id   = "${aws_vpc.main.id}"
 }
 
-
-Do this after certs are up.
-
-resource "aws_alb_listener" "HTTPS-Listener"{
-	load_balancer_arn = "${aws_lb.Load-Balancer.id}"
-	port = 443
-	ssl_policy = "ELBSecurityPolicy-2016-08"
-	certificate_arn = "{aws_acm_certificate.cert.certificate_arn}"
-	default_action {
-		type = "forward"
-		target_group_arn = "${aws_alb_target_group.TSL-Group.arn}"
-	}
-}
-
-
-
-resource "aws_lb_target_group_attachment" "HTTP-attachment-1" {
-  target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
+resource "aws_alb_target_group_attachment" "HTTP-attachment-1" {
+  target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
   target_id        = "${aws_instance.web.id}"
   port             = 80
 }
 
-resource "aws_lb_target_group_attachment" "HTTP-attachment-2" {
-  target_group_arn = "${aws_lb_target_group.HTTP-Group.arn}"
+resource "aws_alb_target_group_attachment" "HTTP-attachment-2" {
+  target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
   target_id        = "${aws_instance.web2.id}"
   port             = 80
-}
-
-resource "aws_lb_target_group_attachment" "HTTPS-attachment-1" {
-  target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
-  target_id        = "${aws_instance.web.id}"
-  port             = 443
-}
-
-resource "aws_lb_target_group_attachment" "HTTPS-attachment-2" {
-  target_group_arn = "${aws_lb_target_group.HTTPS-Group.arn}"
-  target_id        = "${aws_instance.web2.id}"
-  port             = 443
 
 }
 
-Do this when we get certs working:
-
-resource "aws_alb_target_group" "TSL-Group" {
-  name     = "TSL-Group"
-  port     = 443
-  protocol = "HTTPS"
-  vpc_id   = "${aws_vpc.main.id}"
-}
-*/
 
 resource "aws_acm_certificate" "cert" {
 	domain_name = "fa480.club"
@@ -86,6 +63,32 @@ resource "aws_acm_certificate" "cert" {
 resource "aws_route53_zone" "main" {
   name         = "fa480.club"
 }
+
+resource "aws_route53_record" "apex_validation" {
+  name = "${aws_acm_certificate.cert.domain_validation_options.0.resource_record_name}"
+  type = "${aws_acm_certificate.cert.domain_validation_options.0.resource_record_type}"
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  records = ["${aws_acm_certificate.cert.domain_validation_options.0.resource_record_value}"]
+  ttl = 60
+}
+
+resource "aws_route53_record" "wildcard_validation" {
+  name = "${aws_acm_certificate.cert.domain_validation_options.1.resource_record_name}"
+  type = "${aws_acm_certificate.cert.domain_validation_options.1.resource_record_type}"
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  records = ["${aws_acm_certificate.cert.domain_validation_options.1.resource_record_value}"]
+  ttl = 60
+}
+
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn = "${aws_acm_certificate.cert.arn}"
+  validation_record_fqdns = [
+    "${aws_route53_record.apex_validation.fqdn}",
+    "${aws_route53_record.wildcard_validation.fqdn}",
+  ]
+}
+
+
 
 resource "aws_route53_record" "www" {
   zone_id = "${aws_route53_zone.main.zone_id}"
