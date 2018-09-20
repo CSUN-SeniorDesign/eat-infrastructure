@@ -5,3 +5,4 @@ Project 1/Terraform/terraform.tfstate
 Project 1/Terraform/terraform.tfstate.backup
 Project 1/Terraform/.terraform.tfstate.lock.info
 Project 1/Terraform/.terraform/plugins/windows_amd64/terraform-provider-aws_v1.36.0_x4.exe
+*.tfstate
