@@ -5,8 +5,6 @@ resource "aws_vpc" "main" {
 	}
 }
 
-
-
 resource "aws_subnet" "privsubnet1" {
   vpc_id     = "${aws_vpc.main.id}"
   cidr_block = "172.31.32.0/19"
@@ -177,19 +175,19 @@ resource "aws_security_group" "NATSG" {
   description = "NAT_security_group"
   vpc_id      = "${aws_vpc.main.id}"
   ingress {
-  description = "Allow inbound HTTP traffic from servers in the private subnet"
+  description = "Allow inbound HTTP traffic."
      from_port   = 80
      to_port     = 80
      protocol    = "tcp"
-     cidr_blocks = ["172.31.32.0/19"]
+     cidr_blocks = ["0.0.0.0/0"]
    }
 
   ingress {
-  description = "Allow inbound HTTPS traffic from servers in the private subnet"
+  description = "Allow inbound HTTPS traffic"
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
-      cidr_blocks = ["172.31.32.0/19"]
+      cidr_blocks = ["0.0.0.0/0"]
     }
 
   ingress {
