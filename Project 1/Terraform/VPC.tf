@@ -128,12 +128,13 @@ resource "aws_instance" "NAT" {
   associate_public_ip_address = true
   vpc_security_group_ids = ["${aws_security_group.NATSG.id}"]
 	key_name = "${aws_key_pair.deployer.key_name}"
+	source_dest_check = false
   tags {
     Name = "NAT Instance"
   }
 }
 
-resource "aws_security_group" "BlogSG"{
+/*resource "aws_security_group" "BlogSG"{
   name = "BlogSG"
 	description = "Blog security group"
 	vpc_id = "${aws_vpc.main.id}"
@@ -168,18 +169,19 @@ resource "aws_security_group" "BlogSG"{
 		protocol = "tcp"
 		cidr_blocks = ["172.31.128.0/19"]
 	}
-}
+}*/
 
-resource "aws_security_group" "NATSG" {
+  resource "aws_security_group" "NATSG" {
   name        = "NATSG"
-  description = "NAT_security_group"
-  vpc_id      = "${aws_vpc.main.id}"
-  ingress {
+     description = "NAT_security_group"
+     vpc_id      = "${aws_vpc.main.id}"
+
+	ingress {
   description = "Allow inbound HTTP traffic."
      from_port   = 80
      to_port     = 80
      protocol    = "tcp"
-     cidr_blocks = ["0.0.0.0/0"]
+     cidr_blocks = ["172.31.128.0/19"]
    }
 
   ingress {
@@ -187,41 +189,57 @@ resource "aws_security_group" "NATSG" {
       from_port   = 443
       to_port     = 443
       protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["172.31.128.0/19"]
     }
 
+	ingress {
+	description = "ping"
+	    from_port   = -1
+	    to_port     = -1
+	    protocol    = "icmp"
+	    cidr_blocks = ["172.31.128.0/19"]
+	   }
+
   ingress {
-  description = "Allow inbound SSH access to the NAT instance from your home network (over the Internet gateway)"
+  description = "Allow inbound SSH access"
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
      }
 
-		 egress {
-	   description = "Allow outbound SSH access to the NAT instance from anywhere (over the Internet gateway)"
-	       from_port   = 22
-	       to_port     = 22
-	       protocol    = "tcp"
-	       cidr_blocks = ["0.0.0.0/0"]
-	      }
-
   egress {
+	description = "Allow outbound SSH access"
+	    from_port   = 22
+	    to_port     = 22
+	    protocol    = "tcp"
+	    cidr_blocks = ["0.0.0.0/0"]
+	    }
+
+	egress {
+	description = "ping"
+			from_port   = -1
+			to_port     = -1
+			protocol    = "icmp"
+			cidr_blocks = ["0.0.0.0/0"]
+		}
+
+ 	egress {
   description = "Allow outbound HTTP access to the Internet"
-     from_port       = 80
-     to_port         = 80
-     protocol        = "tcp"
-     cidr_blocks     = ["0.0.0.0/0"]
-   }
+     	from_port       = 80
+     	to_port         = 80
+     	protocol        = "tcp"
+      cidr_blocks     = ["0.0.0.0/0"]
+    }
 
   egress {
   description = "Allow outbound HTTPS access to the Internet"
-     from_port       = 443
-     to_port         = 443
-     protocol        = "tcp"
-     cidr_blocks     = ["0.0.0.0/0"]
-   }
- }
+      from_port       = 443
+      to_port         = 443
+      protocol        = "tcp"
+      cidr_blocks     = ["0.0.0.0/0"]
+    }
+  }
 
  resource "aws_eip" "lb" {
    instance = "${aws_instance.NAT.id}"

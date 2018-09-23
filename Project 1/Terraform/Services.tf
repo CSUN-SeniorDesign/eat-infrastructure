@@ -2,7 +2,8 @@ resource "aws_lb" "Load-Balancer"{
   name               = "Load-Balancer"
   internal           = false
   load_balancer_type = "application"
-
+  security_groups = ["${aws_security_group.NATSG.id}"]
+  enable_cross_zone_load_balancing = true
   enable_deletion_protection = false
 
   subnets            = ["${aws_subnet.pubsubnet1.id}","${aws_subnet.pubsubnet2.id}","${aws_subnet.pubsubnet3.id}"]
@@ -136,7 +137,7 @@ resource "aws_instance" "web2" {
   ami           = "ami-51537029"
   instance_type = "t2.micro"
   key_name = "${aws_key_pair.deployer.key_name}"
-  vpc_security_group_ids = ["${aws_security_group.BlogSG.id}"]
+  vpc_security_group_ids = ["${aws_security_group.NATSG.id}"]
   subnet_id = "${aws_subnet.privsubnet1.id}"
   tags {
     Name = "Blog Server 2"
@@ -169,7 +170,7 @@ resource "aws_instance" "web" {
   ami           = "ami-51537029"
   instance_type = "t2.micro"
   key_name = "${aws_key_pair.deployer.key_name}"
-  vpc_security_group_ids = ["${aws_security_group.BlogSG.id}"]
+  vpc_security_group_ids = ["${aws_security_group.NATSG.id}"]
   subnet_id = "${aws_subnet.privsubnet1.id}"
   tags {
     Name = "Blog Server 1"
