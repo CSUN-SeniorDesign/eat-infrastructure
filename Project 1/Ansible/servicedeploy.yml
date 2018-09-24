@@ -1,48 +1,65 @@
 ---
-  - hosts: local
-    sudo: yes
-    tasks:
-      # Git glone the repository onto the blog machine
-      - name: grab the blog files from the git repository
-        command: git clone https://github.com/CSUN-SeniorDesign/eat-blog.git
-        
-      # Download and install Hugo
-      - name: download and install hugo
-        command: snap install hugo
+ - hosts: local
+   sudo: yes
+   tasks:
+     # Pull eat infrastructure
+     - name: pull infrastructure repo
+       command: git clone https://github.com/CSUN-SeniorDesign/eat-infrastructure.git
 
-      # Use Hugo to create a site
-      - name: create site using hugo
-        command: hugo new site beats
+     # Git clone the repository onto the blog machine
+     - name: grab the blog files from the git repository
+       command: git clone https://github.com/CSUN-SeniorDesign/eat-blog.git
 
-      # Clone the git repo that holds the "dream" theme
-      - name: clone git repo for hugo theme
-        command: git clone https://github.com/g1eny0ung/hugo-theme-dream.git
-        
-      # Copy files
-      - name: move files from dream to beats
-        command: mv $HOME/hugo-theme-dream $HOME/beats/themes/
+     # Download and install Hugo
+     - name: download and install hugo
+       command: snap install hugo
 
-      # Copy post files
-      - name: copy post files
-        command: cd $HOME/eat-blog && mv * $HOME/beats/content/post
+     # Create hugo directory
+     - name: create hugo directory
+       command: mkdir /home/ubuntu/beats
 
-      # Edit config file for hugo
-      - name: config file edit
-        command: echo "baseURL = \"https://fa480.club\"" > config.toml
+     # Use Hugo to create a site
+     - name: create site using hugo
+       command: hugo new site beats
 
-      - name: config file edit
-        command: echo "languageCode = \"en-us\"" >> config.toml
+     # Clone the git repo that holds the "dream" theme
+     - name: clone git repo for hugo theme
+       command: git clone https://github.com/g1eny0ung/hugo-theme-dream.git
 
-      - name: config file edit
-        command: echo "title = \"CIT 480 beats blog\"" >> config.toml
+     # Make themes file
+     - name: make themes file
+       command: mkdir /home/ubuntu/beats/content/post
 
-      - name: config file edit
-        command: echo "theme = \"hugo-theme-dream\"" >> config.toml
+     # Copy files
+     - name: move files from dream to beats
+       command: mv /home/ubuntu/hugo-theme-dream/ /home/ubuntu/beats/themes/
 
-      # Run hugo 
-      - name: create site using hugo command
-        command: hugo
+     # Move files
+     - name: move files
+       command: mv /home/ubuntu/eat-blog /home/ubuntu/beats/content/post/
 
-      # Move files from /public to /var/www/html
-      - name: move pubic files to apache's html folder
-        command: cd $HOME/beats/public && mv * /var/www/html
+     # Remove default config
+     - name: remove config
+       command: rm /home/ubuntu/beats/config.toml
+
+     # Move infrastructure file
+     - name: move infrastructure file
+       command: mv /home/ubuntu/eat-infrastructure/"Project 1"/Ansible/config.toml /home/ubuntu/beats/
+
+     # Run hugo
+     - name: create site using hugo command
+       command: hugo
+       args:
+         chdir: /home/ubuntu/beats
+
+     # Delete HTML file
+     - name: remove html file
+       command: rmdir /var/www/html
+
+     # Rename public file
+     - name: rename public file
+       command: mv /home/ubuntu/beats/public /home/ubuntu/beats/html
+
+     # Move beats html to var www
+     - name: move beats html to var www
+       command: mv /home/ubuntu/beats/html /var/www
