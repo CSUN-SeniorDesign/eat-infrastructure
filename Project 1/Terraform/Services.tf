@@ -179,5 +179,5 @@ resource "aws_instance" "web" {
 
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArVp0Hlbm4c6YyqR++WIhaNTr32I+DGWP8uBvbyc38PNcfjYTYYywOn9fn5wJSHL4vJ5dexN/1SM7tNQI9kZ7Z7khz6FDdXDJ+SW9ZkAUx8oGjGIqyDsUU67YqVIZ8wlY03U+82NAYA6EmpfE1UuwSsMUKqoPW1M0QHGXkBhgNCiIv7Q08NI8314KFQwVml4bkE+D6eFYKYYizgnvIZqciMl8sOZMJEtZ/RzZ/LV0woFHY/YJkCMt0laAVnFHqJRGGYAJsc4PbyC29vTZz7jVs5zy9JCuWbRZ+k5fPyH3JqOUD5VEOcaX2WobeweixFsuXW44zaROJN7E65L85lbHSQ== rsa-key-20180918"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAspxdZSwwJDwGuJjT4uNWcrv5sZJEuVUESornDY8Dw/f7eg6lZNlj+kwt+wiAzIORJMJ3YDf5SgZzuG+cyvQT0qASP+B/c57xLyv/awatONR6rG1+KQ4nATg+rANe6efIc2Gx4Zx7avndbwGaR7S5S1WzYH2N5yg/BqEu5SZnI1xYa/eSCGeFmvazYtZtn9C5hpa8SocKcRD2tSKkdILKeVzz8SbMyuP9+gCY8PBXsaN1xA2m4niUa8bbWIPkMHavwhvfKmIu2noVdT6jAAeP93pO1mi47KA32qwO83e+fZRs+KDYp7qnOK0X/55pZKqWk89E6n8PefrwC4r5LbqZgQ== rsa-key-20180923"
   }
