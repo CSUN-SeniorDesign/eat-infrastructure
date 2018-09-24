@@ -18,13 +18,8 @@
       # /var/www/html directory. This must be removed before placing 
       # hugo files in the html directory
       - name: clear apache's html folder
-        command: rm -rf /var/www/html/*
+        command: rm -rf /var/www/html/
 
-      # An empty directory must be made for the tarball of the blog to be
-      # unpacked into
-      - name: create a directory for the tarball
-        file: 
-          path: $HOME/eat-blog
-          state: absent 
-          mode: 0755
-
+      # Remake the html folder
+      - name: make a folder in the /var/html/ 
+        command: mkdir /var/www/html

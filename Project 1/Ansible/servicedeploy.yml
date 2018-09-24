@@ -4,21 +4,11 @@
     tasks:
       # Git glone the repository onto the blog machine
       - name: grab the blog files from the git repository
-        git: 
-          repo: https://github.com/CSUN-SeniorDesign/eat-blog.git
-          dest: $HOME/eat-blog
-          version: master
-
-      # Download Hugo
-      - name: download hugo
-        get_url:
-          url: https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-64bit.deb
-          dest: $HOME/
-          mode: 0440
-
-      # Install Hugo
-      - name: install hugo
-        command: dpkg -i hugo_0.48_Linux-64bit.deb
+        command: git clone https://github.com/CSUN-SeniorDesign/eat-blog.git
+        
+      # Download and install Hugo
+      - name: download and install hugo
+        command: snap install hugo
 
       # Use Hugo to create a site
       - name: create site using hugo
@@ -26,14 +16,28 @@
 
       # Clone the git repo that holds the "dream" theme
       - name: clone git repo for hugo theme
-        git: 
-          repo: https://github.com/g1eny0ung/hugo-theme-dream.git
-          dest: $HOME/beats/themes
-          mode: 0440
-
+        command: git clone https://github.com/g1eny0ung/hugo-theme-dream.git
+        
       # Copy files
       - name: move files from dream to beats
-        command: mv $HOME/eat-blog/* $HOME/beats/content/post
+        command: mv $HOME/hugo-theme-dream $HOME/beats/themes/
+
+      # Copy post files
+      - name: copy post files
+        command: cd $HOME/eat-blog && mv * $HOME/beats/content/post
+
+      # Edit config file for hugo
+      - name: config file edit
+        command: echo "baseURL = \"https://fa480.club\"" > config.toml
+
+      - name: config file edit
+        command: echo "languageCode = \"en-us\"" >> config.toml
+
+      - name: config file edit
+        command: echo "title = \"CIT 480 beats blog\"" >> config.toml
+
+      - name: config file edit
+        command: echo "theme = \"hugo-theme-dream\"" >> config.toml
 
       # Run hugo 
       - name: create site using hugo command
