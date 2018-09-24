@@ -1,12 +1,12 @@
 ---
   - hosts: local
     sudo: yes
-    tasks: 
-      # Apache2 is required to host webpages
+    tasks:
+      # Apache 2 is required to host webpages
       - name: install apache2
         apt: name=apache2 update_cache=yes state=latest
 
-      # Python-pip is required for hugo commands
+      # Python-pip is required for hugo commands 
       - name: install python-pip
         apt: name=python-pip update_cache=yes state=latest
 
@@ -14,12 +14,6 @@
       - name: install git
         apt: name=git update_cache=yes state=latest
 
-      # A fresh install of apache2 leaves an index.html file in the
-      # /var/www/html directory. This must be removed before placing 
-      # hugo files in the html directory
-      - name: clear apache's html folder
+      # Remove html folder from /var/www
+      - name: remove html folder
         command: rm -rf /var/www/html/
-
-      # Remake the html folder
-      - name: make a folder in the /var/html/ 
-        command: mkdir /var/www/html
