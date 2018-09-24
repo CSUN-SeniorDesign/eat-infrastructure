@@ -1,0 +1,30 @@
+---
+  - hosts: local
+    sudo: yes
+    tasks: 
+      # Apache2 is required to host webpages
+      - name: install apache2
+        apt: name=apache2 update_cache=yes state=latest
+
+      # Python-pip is required for hugo commands
+      - name: install python-pip
+        apt: name=python-pip update_cache=yes state=latest
+
+      # Git is required for version control
+      - name: install git
+        apt: name=git update_cache=yes state=latest
+
+      # A fresh install of apache2 leaves an index.html file in the
+      # /var/www/html directory. This must be removed before placing 
+      # hugo files in the html directory
+      - name: clear apache's html folder
+        command: rm -rf /var/www/html/*
+
+      # An empty directory must be made for the tarball of the blog to be
+      # unpacked into
+      - name: create a directory for the tarball
+        file: 
+          path: $HOME/eat-blog
+          state: absent 
+          mode: 0755
+

@@ -1,0 +1,44 @@
+---
+  - hosts: local
+    sudo: yes
+    tasks:
+      # Git glone the repository onto the blog machine
+      - name: grab the blog files from the git repository
+        git: 
+          repo: https://github.com/CSUN-SeniorDesign/eat-blog.git
+          dest: $HOME/eat-blog
+          version: master
+
+      # Download Hugo
+      - name: download hugo
+        get_url:
+          url: https://github.com/gohugoio/hugo/releases/download/v0.48/hugo_0.48_Linux-64bit.deb
+          dest: $HOME/
+          mode: 0440
+
+      # Install Hugo
+      - name: install hugo
+        command: dpkg -i hugo_0.48_Linux-64bit.deb
+
+      # Use Hugo to create a site
+      - name: create site using hugo
+        command: hugo new site beats
+
+      # Clone the git repo that holds the "dream" theme
+      - name: clone git repo for hugo theme
+        git: 
+          repo: https://github.com/g1eny0ung/hugo-theme-dream.git
+          dest: $HOME/beats/themes
+          mode: 0440
+
+      # Copy files
+      - name: move files from dream to beats
+        command: mv $HOME/eat-blog/* $HOME/beats/content/post
+
+      # Run hugo 
+      - name: create site using hugo command
+        command: hugo
+
+      # Move files from /public to /var/www/html
+      - name: move pubic files to apache's html folder
+        command: cd $HOME/beats/public && mv * /var/www/html
