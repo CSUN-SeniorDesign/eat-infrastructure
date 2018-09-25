@@ -1,0 +1,9 @@
+commands:
+  commandName: 
+    description: "Test command."
+    parameters:
+      to:
+        type: string
+        default: "Hello World."
+      steps:
+        - run: echo <<parameters.to>>
