@@ -26,6 +26,10 @@ resource "aws_iam_user" "Shahid"{
   name = "Shahid"
 }
 
+resource "aws_iam_user" "CircleCI"{
+  name = "CircleCI"
+}
+
 resource "aws_iam_group_membership" "EAT-Membership" {
   name = "Adding-members-to-EAT"
 
@@ -40,11 +44,41 @@ resource "aws_iam_group_membership" "EAT-Membership" {
   group = "${aws_iam_group.Eat-Team.name}"
 }
 
-data "aws_iam_policy" "policy" {
-  arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
-
 resource "aws_iam_group_policy_attachment" "attach-policy" {
   group = "${aws_iam_group.Eat-Team.name}"
   policy_arn = "${data.aws_iam_policy.policy.arn}"
 }
+
+
+
+resource "aws_iam_group" "Bots" {
+  name = "Bots"
+}
+
+resource "aws_iam_group_membership" "Bot-Membership" {
+  name = "Adding-members-to-Bots"
+
+  users = [
+    "${aws_iam_user.CircleCI.name}"
+  ]
+
+  group = "${aws_iam_group.Bots.name}"
+}
+
+resource "aws_iam_group_policy_attachment" "attach-bot-policy" {
+  group = "${aws_iam_group.Bots.name}"
+  policy_arn = "${data.aws_iam_policy.PO.arn}"
+}
+
+
+
+
+data "aws_iam_policy" "policy" {
+  arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
+data "aws_iam_policy" "PO" {
+  arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+
