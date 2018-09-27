@@ -67,7 +67,7 @@ resource "aws_iam_group_membership" "Bot-Membership" {
 
 resource "aws_iam_group_policy_attachment" "attach-bot-policy" {
   group = "${aws_iam_group.Bots.name}"
-  policy_arn = "${data.aws_iam_policy.PO.arn}"
+  policy_arn = "${aws_iam_policy.PO.arn}"
 }
 
 
@@ -77,8 +77,25 @@ data "aws_iam_policy" "policy" {
   arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-data "aws_iam_policy" "PO" {
-  arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+resource "aws_iam_policy" "PO" {
+  name = "PO_Policy"
+  path = "/"
+  description = "Bot Policy, Upload to S3"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+     {
+         "Sid": "Stmt15807183600",
+         "Effect": "Allow",
+         "Action": [
+               "s3:PutObject" 
+         ],
+         "Resource": [
+               "*"
+         ]
+     }
+  ]
 }
-
-
+EOF
+}
