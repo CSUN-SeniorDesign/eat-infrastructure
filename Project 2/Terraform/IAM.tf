@@ -30,6 +30,7 @@ resource "aws_iam_user" "CircleCI"{
   name = "CircleCI"
 }
 
+
 resource "aws_iam_group_membership" "EAT-Membership" {
   name = "Adding-members-to-EAT"
 
@@ -47,6 +48,62 @@ resource "aws_iam_group_membership" "EAT-Membership" {
 resource "aws_iam_group_policy_attachment" "attach-policy" {
   group = "${aws_iam_group.Eat-Team.name}"
   policy_arn = "${data.aws_iam_policy.policy.arn}"
+}
+
+
+
+
+
+
+resource "aws_iam_policy" "IO" {
+  name = "IO_Policy"
+  path = "/"
+  description = "Instance Policy, Fetch from S3"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::csuneat-project-2/*",
+                "arn:aws:s3:::csuneat-project-2"
+            ]
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role" "IR" {
+  name = "IR_Role"
+  path = "/"
+  description = "Instance Role, Fetch from S3"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17", 
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole", 
+      "Effect": "Allow", 
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      }
+    }
+   ]
+} 
+EOF
+}
+
+
+resource "aws_iam_role_policy_attachment" "Ir-attach" {
+    role       = "${aws_iam_role.IR.name}"
+    policy_arn = "${aws_iam_policy.IO.arn}"
 }
 
 

@@ -190,3 +190,48 @@ resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAspxdZSwwJDwGuJjT4uNWcrv5sZJEuVUESornDY8Dw/f7eg6lZNlj+kwt+wiAzIORJMJ3YDf5SgZzuG+cyvQT0qASP+B/c57xLyv/awatONR6rG1+KQ4nATg+rANe6efIc2Gx4Zx7avndbwGaR7S5S1WzYH2N5yg/BqEu5SZnI1xYa/eSCGeFmvazYtZtn9C5hpa8SocKcRD2tSKkdILKeVzz8SbMyuP9+gCY8PBXsaN1xA2m4niUa8bbWIPkMHavwhvfKmIu2noVdT6jAAeP93pO1mi47KA32qwO83e+fZRs+KDYp7qnOK0X/55pZKqWk89E6n8PefrwC4r5LbqZgQ== rsa-key-20180923"
   }
+
+resource "aws_launch_configuration" "launch-config"{
+  image_id = "ami-0bbe6b35405ecebdb"
+  instance_type = "t2.micro"
+  security_groups = ["${aws_security_group.NATSG.id}"]
+  ebs_optimized = false
+  key_name = "${aws_key_pair.deployer.key_name}"
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+resource "aws_autoscaling_group" "asg" {
+  name                 = "BEATS-ASG"
+  launch_configuration = "${aws_launch_configuration.launch-config.name}"
+  min_size             = "1"
+  max_size             = "2"
+  desired_capacity     = "1"
+  vpc_zone_identifier  = ["${aws_subnet.privsubnet1.id}"]  
+  target_group_arns         = ["${aws_alb_target_group.HTTP-Group.arn}"]
+
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_autoscaling_policy" "asg_policy" {
+  name                   = "asg_policy"
+  autoscaling_group_name = "${aws_autoscaling_group.asg.name}"
+  policy_type = "TargetTrackingScaling"
+  target_tracking_configuration {
+  predefined_metric_specification {
+    predefined_metric_type = "ASGAverageCPUUtilization"
+  }
+  target_value = 40.0
+}
+}
+
+
+
+
+
+
