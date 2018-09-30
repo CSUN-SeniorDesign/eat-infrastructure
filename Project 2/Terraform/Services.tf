@@ -191,16 +191,26 @@ resource "aws_key_pair" "deployer" {
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAspxdZSwwJDwGuJjT4uNWcrv5sZJEuVUESornDY8Dw/f7eg6lZNlj+kwt+wiAzIORJMJ3YDf5SgZzuG+cyvQT0qASP+B/c57xLyv/awatONR6rG1+KQ4nATg+rANe6efIc2Gx4Zx7avndbwGaR7S5S1WzYH2N5yg/BqEu5SZnI1xYa/eSCGeFmvazYtZtn9C5hpa8SocKcRD2tSKkdILKeVzz8SbMyuP9+gCY8PBXsaN1xA2m4niUa8bbWIPkMHavwhvfKmIu2noVdT6jAAeP93pO1mi47KA32qwO83e+fZRs+KDYp7qnOK0X/55pZKqWk89E6n8PefrwC4r5LbqZgQ== rsa-key-20180923"
   }
 
+
+resource "aws_iam_instance_profile" "IP"{
+  role = "${aws_iam_role.IR.name}" 
+
+}
+
 resource "aws_launch_configuration" "launch-config"{
   image_id = "ami-0bbe6b35405ecebdb"
   instance_type = "t2.micro"
   security_groups = ["${aws_security_group.NATSG.id}"]
   ebs_optimized = false
   key_name = "${aws_key_pair.deployer.key_name}"
+  iam_instance_profile = "${aws_iam_instance_profile.IP.arn}"
+
   lifecycle {
     create_before_destroy = true
   }
 }
+
+
 
 
 resource "aws_autoscaling_group" "asg" {
@@ -211,11 +221,31 @@ resource "aws_autoscaling_group" "asg" {
   desired_capacity     = "1"
   vpc_zone_identifier  = ["${aws_subnet.privsubnet1.id}"]  
   target_group_arns         = ["${aws_alb_target_group.HTTP-Group.arn}"]
+  initial_lifecycle_hook{
+     name = "BEATS-hook"
+     heartbeat_timeout = 1500
+     lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
+     default_result = "CONTINUE"
 
+     notification_metadata = <<EOF
+     {
+       "a": "b"
+     }
+     EOF
+     
+     notification_target_arn = "arn:aws:sqs:us-west-2:1231231234:queue1*"
+     role_arn = "${aws_iam_role.IR.arn}"
+
+  }
 
   lifecycle {
     create_before_destroy = true
   }
+
+  timeouts {
+    delete = "30m"
+  }
+
 }
 
 resource "aws_autoscaling_policy" "asg_policy" {
