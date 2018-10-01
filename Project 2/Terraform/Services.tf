@@ -101,6 +101,18 @@ resource "aws_route53_record" "www" {
    evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "www-staging" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "www.staging.fa480.club"
+  type    = "A"
+  alias {
+   name   = "${aws_lb.Load-Balancer.dns_name}"
+   zone_id = "${aws_lb.Load-Balancer.zone_id}"
+   evaluate_target_health = true
+  }
+}
+
 resource "aws_route53_record" "blog" {
   zone_id = "${aws_route53_zone.main.zone_id}"
   name    = "blog.fa480.club"
@@ -112,6 +124,18 @@ resource "aws_route53_record" "blog" {
   }
 }
 
+resource "aws_route53_record" "blog-staging" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "blog.staging.fa480.club"
+  type    = "A"
+  alias {
+   name   = "${aws_lb.Load-Balancer.dns_name}"
+   zone_id = "${aws_lb.Load-Balancer.zone_id}"
+   evaluate_target_health = true
+  }
+}
+
+
 resource "aws_route53_record" "apex" {
   zone_id = "${aws_route53_zone.main.zone_id}"
   name    = "fa480.club"
@@ -121,6 +145,17 @@ resource "aws_route53_record" "apex" {
     zone_id = "${aws_lb.Load-Balancer.zone_id}"
     evaluate_target_health = true
   }  
+}
+
+resource "aws_route53_record" "apex-staging" {
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  name    = "staging.fa480.club"
+  type    = "A"
+  alias {
+   name   = "${aws_lb.Load-Balancer.dns_name}"
+   zone_id = "${aws_lb.Load-Balancer.zone_id}"
+   evaluate_target_health = true
+  }
 }
 
 # Create a new instance of the latest Ubuntu Server on an

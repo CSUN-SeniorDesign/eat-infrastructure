@@ -134,43 +134,6 @@ resource "aws_instance" "NAT" {
   }
 }
 
-/*resource "aws_security_group" "BlogSG"{
-  name = "BlogSG"
-	description = "Blog security group"
-	vpc_id = "${aws_vpc.main.id}"
-
-  ingress {
-    description = "Allow SSH traffic"
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-  egress {
-    description = "Allow SSH traffic"
-		from_port = 22
-		to_port = 22
-		protocol = "tcp"
-		cidr_blocks = ["0.0.0.0/0"]
-	}
-
-  ingress {
-    description = "Allow HTTP traffic from pubsubnet1"
-		from_port = 80
-		to_port = 80
-		protocol = "tcp"
-		cidr_blocks = ["172.31.128.0/19"]
-	}
-  egress {
-    description = "Allow HTTP traffic to pubsubnet1"
-		from_port = 80
-		to_port = 80
-		protocol = "tcp"
-		cidr_blocks = ["172.31.128.0/19"]
-	}
-}*/
-
   resource "aws_security_group" "NATSG" {
   name        = "NATSG"
      description = "NAT_security_group"
