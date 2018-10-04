@@ -57,7 +57,7 @@ resource "aws_alb_target_group_attachment" "HTTP-attachment-2" {
 
 resource "aws_acm_certificate" "cert" {
 	domain_name = "fa480.club"
-	subject_alternative_names = ["*.fa480.club"]
+	subject_alternative_names = ["*.fa480.club","*.staging.fa480.club"]
 	validation_method = "DNS"
 }
 
@@ -81,11 +81,20 @@ resource "aws_route53_record" "wildcard_validation" {
   ttl = 60
 }
 
+resource "aws_route53_record" "staging_validation" {
+  name = "${aws_acm_certificate.cert.domain_validation_options.2.resource_record_name}"
+  type = "${aws_acm_certificate.cert.domain_validation_options.2.resource_record_type}"
+  zone_id = "${aws_route53_zone.main.zone_id}"
+  records = ["${aws_acm_certificate.cert.domain_validation_options.2.resource_record_value}"]
+  ttl = 60
+}
+
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn = "${aws_acm_certificate.cert.arn}"
   validation_record_fqdns = [
     "${aws_route53_record.apex_validation.fqdn}",
     "${aws_route53_record.wildcard_validation.fqdn}",
+    "${aws_route53_record.staging_validation.fqdn}"
   ]
 }
 
@@ -244,9 +253,6 @@ resource "aws_launch_configuration" "launch-config"{
     create_before_destroy = true
   }
 }
-
-
-
 
 resource "aws_autoscaling_group" "asg" {
   name                 = "BEATS-ASG"
