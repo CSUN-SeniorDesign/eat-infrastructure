@@ -153,7 +153,7 @@ resource "aws_route53_record" "apex" {
     name = "${aws_lb.Load-Balancer.dns_name}"
     zone_id = "${aws_lb.Load-Balancer.zone_id}"
     evaluate_target_health = true
-  }  
+  }
 }
 
 resource "aws_route53_record" "apex-staging" {
@@ -237,12 +237,12 @@ resource "aws_key_pair" "deployer" {
 
 
 resource "aws_iam_instance_profile" "IP"{
-  role = "${aws_iam_role.IR.name}" 
+  role = "${aws_iam_role.IR.name}"
 
 }
 
 resource "aws_launch_configuration" "launch-config"{
-  image_id = "ami-0347d2b486d3bc83e"
+  image_id = "ami-0d39352def991aa50"
   instance_type = "t2.micro"
   security_groups = ["${aws_security_group.NATSG.id}"]
   ebs_optimized = false
@@ -260,7 +260,7 @@ resource "aws_autoscaling_group" "asg" {
   min_size             = "1"
   max_size             = "2"
   desired_capacity     = "1"
-  vpc_zone_identifier  = ["${aws_subnet.privsubnet1.id}"]  
+  vpc_zone_identifier  = ["${aws_subnet.privsubnet1.id}"]
   target_group_arns         = ["${aws_alb_target_group.HTTP-Group.arn}"]
   initial_lifecycle_hook{
      name = "BEATS-hook"
@@ -273,7 +273,7 @@ resource "aws_autoscaling_group" "asg" {
        "a": "b"
      }
      EOF
-     
+
      notification_target_arn = "arn:aws:sqs:us-west-2:1231231234:queue1*"
      role_arn = "${aws_iam_role.IR.arn}"
 
@@ -300,9 +300,3 @@ resource "aws_autoscaling_policy" "asg_policy" {
   target_value = 40.0
 }
 }
-
-
-
-
-
-
