@@ -242,7 +242,7 @@ resource "aws_iam_instance_profile" "IP"{
 }
 
 resource "aws_launch_configuration" "launch-config"{
-  image_id = "ami-0bbe6b35405ecebdb"
+  image_id = "ami-0347d2b486d3bc83e"
   instance_type = "t2.micro"
   security_groups = ["${aws_security_group.NATSG.id}"]
   ebs_optimized = false
