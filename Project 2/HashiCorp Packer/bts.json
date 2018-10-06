@@ -1,0 +1,72 @@
+{
+  "variables": {
+  "aws_access_key": "",
+  "aws_secret_key": ""
+},
+  "builders": [{
+  "type": "amazon-ebs",
+  "region": "us-west-2",
+  "access_key": "{{user `aws_access_key`}}",
+  "secret_key": "{{user `aws_secret_key`}}",
+  "source_ami": "ami-0bbe6b35405ecebdb",
+  "instance_type": "t2.micro",
+  "ssh_keypair_name": "deployer-key",
+  "ssh_private_key_file": "privatekey.pem",
+  "ssh_username": "ubuntu",
+  "ssh_pty": "true",
+  "vpc_id": "vpc-0983c8a147e5ddff1",
+  "subnet_id": "subnet-0fad6e2b77ce48884",
+  "security_group_id": "sg-050451353c4d979bf",
+  "ssh_bastion_host": "34.213.12.211",
+  "ssh_bastion_username": "ec2-user",
+  "ssh_bastion_private_key_file": "privatekey.pem",
+  "ami_name": "beats-base-packer {{timestamp}}",
+  "name": "beats"
+  }],
+  "provisioners": [
+    {
+  "type": "file",
+  "source": "cron1.sh",
+  "destination": "/home/ubuntu/cron1.sh"
+    },
+    {
+  "type": "file",
+  "source": "cron2.sh",
+  "destination": "/home/ubuntu/cron2.sh"
+    },
+{
+"type": "file",
+"source": "staging/blog.staging.fa480.club.conf",
+"destination": "/home/ubuntu/blog.staging.fa480.club.conf"
+},
+{
+"type": "file",
+"source": "staging/staging.fa480.club.conf",
+"destination": "/home/ubuntu/staging.fa480.club.conf"
+},
+{
+"type": "file",
+"source": "staging/www.staging.fa480.club.conf",
+"destination": "/home/ubuntu/www.staging.fa480.club.conf"
+},
+{
+"type": "file",
+"source": "S3-Fetch.py",
+"destination": "/home/ubuntu/S3-Fetch.py"
+},
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/setup-cron.sh",
+        "scripts/start-cron1.sh",
+        "scripts/start-cron2.sh",
+        "scripts/apache.sh",
+        "scripts/awscli.sh",
+        "scripts/datadog.sh",
+        "scripts/ansible.sh",
+        "staging/setup-staging.sh",
+        "staging/staging.sh"
+      ]
+    }
+  ]
+}
