@@ -114,4 +114,85 @@ Packer uses builders and provisioners to handle your code. Provisioners handle t
 ### Manage your AMIs
 Remember to deregister old AMIs that are not being used anymore since Amazon charges $0.01/month for each AMI. It is very cheap but the images can add up quickly if you test enough of times. To De-register an image you just right click and click `Deregister`.
 
+### Builders
+Builders are used to configure your your base AMI. You change things such as which OS/AMI to use, Region, Subnet, etc.
+````
+},
+  "builders": [{
+  "type": "amazon-ebs",
+  "region": "us-west-2",
+  "access_key": "{{user `aws_access_key`}}",
+  "secret_key": "{{user `aws_secret_key`}}",
+  "source_ami": "ami-0bbe6b35405ecebdb",
+  "instance_type": "t2.micro",
+  "ssh_keypair_name": "name-of-key",
+  "ssh_private_key_file": "privatekey.pem",
+  "ssh_username": "ubuntu",
+  "ssh_pty": "true",
+  "vpc_id": "VPC-ID",
+  "subnet_id": "SUBNET-ID",
+  "security_group_id": "SECURITY-GROUP-ID",
+  "ssh_bastion_host": "BASTION-IP",
+  "ssh_bastion_username": "ec2-user",
+  "ssh_bastion_private_key_file": "privatekey.pem",
+  "ami_name": "beats-base-packer {{timestamp}}",
+  "name": "beats"
+  }],
+````
+
+### Provisioners
+Files are imported from local project folder onto base AMI.
+````
+"provisioners": [
+  {
+"type": "file",
+"source": "cron1.sh",
+"destination": "/home/ubuntu/cron1.sh"
+  },
+  {
+"type": "file",
+"source": "cron2.sh",
+"destination": "/home/ubuntu/cron2.sh"
+  },
+{
+"type": "file",
+"source": "staging/blog.staging.fa480.club.conf",
+"destination": "/home/ubuntu/blog.staging.fa480.club.conf"
+},
+{
+"type": "file",
+"source": "staging/staging.fa480.club.conf",
+"destination": "/home/ubuntu/staging.fa480.club.conf"
+},
+{
+"type": "file",
+"source": "staging/www.staging.fa480.club.conf",
+"destination": "/home/ubuntu/www.staging.fa480.club.conf"
+},
+{
+"type": "file",
+"source": "S3-Fetch.py",
+"destination": "/home/ubuntu/S3-Fetch.py"
+},
+````
+
+### Scripts
+This is the order of scripts that we run.
+````
+{
+  "type": "shell",
+  "scripts": [
+    "scripts/setup-cron.sh",
+    "scripts/start-cron1.sh",
+    "scripts/start-cron2.sh",
+    "scripts/apache.sh",
+    "scripts/awscli.sh",
+    "scripts/datadog.sh",
+    "scripts/ansible.sh",
+    "staging/setup-staging.sh",
+    "staging/staging.sh"
+  ]
+}
+````
+
 Enjoy!
