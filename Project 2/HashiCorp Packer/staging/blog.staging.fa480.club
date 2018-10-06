@@ -1,0 +1,11 @@
+<VirtualHost *>
+
+        ServerAdmin webmaster@example.net
+        ServerName  blog.staging.fa480.club
+        ServerAlias blog.staging.fa480.club
+
+        # Indexes + Directory Root.
+        DirectoryIndex index.html
+        DocumentRoot /home/www/www.example.net/htdocs/
+
+</VirtualHost>
