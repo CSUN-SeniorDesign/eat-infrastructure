@@ -257,9 +257,9 @@ resource "aws_launch_configuration" "launch-config"{
 resource "aws_autoscaling_group" "asg" {
   name                 = "BEATS-ASG"
   launch_configuration = "${aws_launch_configuration.launch-config.name}"
-  min_size             = "1"
+  min_size             = "2"
   max_size             = "2"
-  desired_capacity     = "1"
+  desired_capacity     = "2"
   vpc_zone_identifier  = ["${aws_subnet.privsubnet1.id}"]
   target_group_arns         = ["${aws_alb_target_group.HTTP-Group.arn}"]
   initial_lifecycle_hook{
