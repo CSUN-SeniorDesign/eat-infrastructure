@@ -300,3 +300,77 @@ resource "aws_autoscaling_policy" "asg_policy" {
   target_value = 40.0
 }
 }
+
+resource "aws_iam_policy" "LP" {
+  name = "LP_Policy"
+  path = "/"
+  description = "Policy for lambda."
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::csuneat-project-2/*",
+                "arn:aws:s3:::csuneat-project-2",
+            ]
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "lambda:*",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role" "lambda-role"{
+    name = "lambda-role"
+    
+  assume_role_policy=<<EOF
+{
+  "Version": "2012-10-17", 
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole", 
+      "Effect": "Allow", 
+      "Principal": {
+        "Service": "ecs.amazonaws.com"
+      }
+    }
+   ]
+} 
+EOF
+
+}
+
+resource "aws_iam_role_policy_attachment" "LP-attach" {
+    role       = "${aws_iam_role.lambda-role.name}"
+    policy_arn = "${aws_iam_policy.LP.arn}"
+}
+
+resource "aws_lambda_function" "test-lambda" {
+  filename         = "lambda.py.zip"
+  function_name    = "test_handler"
+  role             = "${aws_iam_role.lambda-role.arn}"
+  handler          = "lambda.my_handler"
+  source_code_hash = "${base64sha256(file("lambda.py.zip"))}"
+  runtime          = "python3.6"
+
+  environment {
+    variables = {
+      foo = "bar"
+    }
+  }
+}
+
+
+
