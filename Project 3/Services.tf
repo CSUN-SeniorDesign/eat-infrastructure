@@ -424,4 +424,23 @@ resource "aws_lambda_function" "test-lambda" {
 }
 
 
+resource "aws_s3_bucket_notification" "bucket_notification" {
+  bucket = "${aws_s3_bucket.bucket.id}"
+
+  lambda_function {
+    lambda_function_arn = "${aws_lambda_function.test-lambda.arn}"
+    events              = ["s3:ObjectCreated:*"]
+    filter_suffix       = ".txt"
+  }
+}
+
+resource "aws_lambda_permission" "allow_bucket" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.test-lambda.arn}"
+  principal     = "s3.amazonaws.com"
+  source_arn    = "${aws_s3_bucket.bucket.arn}"
+}
+
+
 
