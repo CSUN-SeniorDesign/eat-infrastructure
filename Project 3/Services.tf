@@ -242,7 +242,7 @@ resource "aws_iam_instance_profile" "IP"{
 }
 
 resource "aws_launch_configuration" "launch-config"{
-  image_id = "ami-0d39352def991aa50"
+  image_id = "ami-03aeeee0fc4b4a35c"
   instance_type = "t2.micro"
   security_groups = ["${aws_security_group.NATSG.id}"]
   ebs_optimized = false
@@ -305,7 +305,7 @@ resource "aws_iam_policy" "LP" {
   name = "LP_Policy"
   path = "/"
   description = "Policy for lambda."
-  policy = <<EOF
+  policy =<<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -313,18 +313,68 @@ resource "aws_iam_policy" "LP" {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
             "Action": [
-                "s3:GetObject",
-                "s3:ListBucket"
+                "ecs:SubmitTaskStateChange",
+                "ecs:RunTask",
+                "ecs:UpdateContainerInstancesState",
+                "ecs:UpdateContainerAgent",
+                "ecs:StartTask",
+                "ecs:RegisterContainerInstance",
+                "ecs:DeleteCluster",
+                "ecs:SubmitContainerStateChange",
+                "ecs:StopTask",
+                "ecs:DeregisterContainerInstance"
             ],
             "Resource": [
-                "arn:aws:s3:::csuneat-project-2/*",
-                "arn:aws:s3:::csuneat-project-2",
+                "arn:aws:ecs:*:*:task-definition/*:*",
+                "arn:aws:ecs:*:*:task/*",
+                "arn:aws:ecs:*:*:container-instance/*",
+                "arn:aws:ecs:*:*:cluster/*"
             ]
         },
         {
-            "Sid": "VisualEditor0",
+            "Sid": "VisualEditor1",
             "Effect": "Allow",
-            "Action": "lambda:*",
+            "Action": [
+                "ecs:DeregisterTaskDefinition",
+                "ecs:UpdateService",
+                "ecs:CreateService",
+                "ecs:CreateCluster",
+                "ecs:RegisterTaskDefinition",
+                "ecs:DeleteService"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:TagResource",
+                "lambda:InvokeFunction",
+                "lambda:ListAliases",
+                "lambda:UpdateFunctionConfiguration",
+                "lambda:InvokeAsync",
+                "lambda:UntagResource",
+                "lambda:PutFunctionConcurrency",
+                "lambda:UpdateAlias",
+                "lambda:UpdateFunctionCode",
+                "lambda:DeleteAlias",
+                "lambda:DeleteFunction",
+                "lambda:PublishVersion",
+                "lambda:DeleteFunctionConcurrency",
+                "lambda:CreateAlias"
+            ],
+            "Resource": "arn:aws:lambda:*:*:function:*"
+        },
+        {
+            "Sid": "VisualEditor3",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:CreateFunction",
+                "lambda:UpdateEventSourceMapping",
+                "lambda:ListFunctions",
+                "lambda:CreateEventSourceMapping",
+                "lambda:DeleteEventSourceMapping"
+            ],
             "Resource": "*"
         }
     ]
@@ -343,7 +393,7 @@ resource "aws_iam_role" "lambda-role"{
       "Action": "sts:AssumeRole", 
       "Effect": "Allow", 
       "Principal": {
-        "Service": "ecs.amazonaws.com"
+        "Service": "lambda.amazonaws.com"
       }
     }
    ]
@@ -357,11 +407,12 @@ resource "aws_iam_role_policy_attachment" "LP-attach" {
     policy_arn = "${aws_iam_policy.LP.arn}"
 }
 
+
 resource "aws_lambda_function" "test-lambda" {
   filename         = "lambda.py.zip"
   function_name    = "test_handler"
   role             = "${aws_iam_role.lambda-role.arn}"
-  handler          = "lambda.my_handler"
+  handler          = "lambda.test_handler"
   source_code_hash = "${base64sha256(file("lambda.py.zip"))}"
   runtime          = "python3.6"
 
