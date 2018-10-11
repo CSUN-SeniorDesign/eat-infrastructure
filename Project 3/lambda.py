@@ -1,6 +1,6 @@
 def my_handler(event, context):
     #message = 'Hello {} {}!'.format(event['first_name'],
     #                                event['last_name'])
-
-    endstr = "messsage is " + event + " and context is " + context
-    return endstr
+    return {
+        "Event is " + str(event) + " and context is " + str(context)
+    }
