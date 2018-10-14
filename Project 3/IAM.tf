@@ -68,12 +68,29 @@ resource "aws_iam_policy" "IO" {
             "Effect": "Allow",
             "Action": [
                 "s3:GetObject",
-                "s3:ListBucket"
+                "ecr:SetRepositoryPolicy",
+                "ecr:CompleteLayerUpload",
+                "ecr:DescribeRepositories",
+                "s3:ListBucket",
+                "ecr:BatchDeleteImage",
+                "ecr:UploadLayerPart",
+                "ecr:ListImages",
+                "ecr:DeleteRepositoryPolicy",
+                "ecr:InitiateLayerUpload",
+                "ecr:DeleteRepository",
+                "ecr:PutImage"
             ],
             "Resource": [
+                "arn:aws:ecr:*:*:repository/*",
                 "arn:aws:s3:::csuneat-project-2/*",
                 "arn:aws:s3:::csuneat-project-2"
             ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "ecr:CreateRepository",
+            "Resource": "*"
         }
     ]
 }
