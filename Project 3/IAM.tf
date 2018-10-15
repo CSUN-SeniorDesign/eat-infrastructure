@@ -157,7 +157,10 @@ resource "aws_iam_policy" "PO" {
             "Effect": "Allow",
             "Action": [
                 "ecr:SetRepositoryPolicy",
+                "ecr:CompleteLayerUpload",
+                "ecr:DescribeRepositories",
                 "ecr:UploadLayerPart",
+                "ecr:ListImages",
                 "ecr:InitiateLayerUpload",
                 "ecr:PutImage"
             ],
