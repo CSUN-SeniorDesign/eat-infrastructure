@@ -41,16 +41,22 @@ def my_handler(event, context):
     filename = the_object.get("key")
 
     tag = getFile(bucket_name,filename,filename)
-    containername
+    containername = ""
+    imagename = ""
 
     if filename == "ProductionSite.txt":
         containername = "production"
+        imagename = "service-second"
     elif filename=="StagingSite.txt":
-        contianername = "staging"
+        containername = "staging"
+        imagename = "service-first"
 
-    update(tag,containername)
 
-    getFile(bucket_name,filename,filename)
+
+    print(tag)
+
+
+    update(tag,containername,imagename)
 
 def getFile(bucket, filename, filepath):
     filepath = "/tmp/"+filepath
@@ -68,8 +74,8 @@ def getFile(bucket, filename, filepath):
 response = client.list_task_definitions(familyPrefix= 'demotask', status='ACTIVE')
 
 #pprint.pprint(response['taskDefinitionArns'][3])
-def update(tag,containername):
-    imagename = "507963158957.dkr.ecr.us-west-2.amazonaws.com/beats_repo"+tag
+def update(tag,containername,imagename):
+    print(imagename)
     response = client.register_task_definition(
         family='demotask',
     #taskRoleArn='string',
@@ -90,8 +96,8 @@ def update(tag,containername):
                         'protocol': 'tcp'
                     },
                     {
-                        'containerPort': 80,
-                        'hostPort': 80,
+                        'containerPort': 443,
+                        'hostPort': 443,
                         'protocol': 'tcp'
                     }
                 ],
