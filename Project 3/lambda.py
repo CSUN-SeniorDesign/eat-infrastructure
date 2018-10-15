@@ -1,4 +1,9 @@
 import boto3
+import pprint
+import os
+
+region = "us-west-2"
+client = boto3.client('ecs', region_name=region)
 
 def my_handler(event, context):
     '''
@@ -34,7 +39,17 @@ def my_handler(event, context):
 
     the_object = event.get("Records")[0].get("s3").get("object")
     filename = the_object.get("key")
+    
+    tag = getFile(bucket_name,filename,filename)
+    containername
 
+    if filename == "ProductionSite.txt":
+        containername = "production"
+    elif filename=="StagingSite.txt":
+        contianername = "staging"
+
+    update(tag,containername)
+    
     getFile(bucket_name,filename,filename)
 
 def getFile(bucket, filename, filepath):
@@ -46,5 +61,57 @@ def getFile(bucket, filename, filepath):
     txt_file = open(filepath, "r")
     tag = txt_file.readline()
     txt_file.close()
+    
+    return tag
 
-    print(tag)
+
+response = client.list_task_definitions(familyPrefix= 'demotask', status='ACTIVE')
+
+#pprint.pprint(response['taskDefinitionArns'][3])
+def update(tag,containername):
+    imagename = "507963158957.dkr.ecr.us-west-2.amazonaws.com/beats_repo"+tag
+    response = client.register_task_definition(
+        family='demotask',
+    #taskRoleArn='string',
+        networkMode='bridge',
+        containerDefinitions=[
+            {
+                'name': containername,
+                'image': imagename,
+            #'cpu': 123,
+                'memory': 300,
+            #'memoryReservation': 123,
+            #'links': [
+            #    'string',
+                'portMappings': [
+                    {
+                        'containerPort': 80,
+                        'hostPort': 80,
+                        'protocol': 'tcp'
+                    },
+                    {
+                        'containerPort': 80,
+                        'hostPort': 80,
+                        'protocol': 'tcp'
+                    }
+                ],
+                'essential': True,
+            },
+        ],
+    )
+    pprint.pprint(response['taskDefinition']['revision'])
+#Update service
+    taskDefinitionRev = response['taskDefinition']['family'] + ':' + str(response['taskDefinition']['revision'])
+#print taskDefinition
+    response = client.update_service(
+        cluster='clusterdemo',
+        service='servicedemo',
+        desiredCount=1,
+        taskDefinition=taskDefinitionRev,
+        deploymentConfiguration={
+            'maximumPercent': 100,
+            'minimumHealthyPercent': 40
+        }
+    )
+    #pprint.pprint(response)
+print "service updated"
