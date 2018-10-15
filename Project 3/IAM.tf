@@ -68,29 +68,12 @@ resource "aws_iam_policy" "IO" {
             "Effect": "Allow",
             "Action": [
                 "s3:GetObject",
-                "ecr:SetRepositoryPolicy",
-                "ecr:CompleteLayerUpload",
-                "ecr:DescribeRepositories",
-                "s3:ListBucket",
-                "ecr:BatchDeleteImage",
-                "ecr:UploadLayerPart",
-                "ecr:ListImages",
-                "ecr:DeleteRepositoryPolicy",
-                "ecr:InitiateLayerUpload",
-                "ecr:DeleteRepository",
-                "ecr:PutImage"
+                "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:ecr:*:*:repository/*",
                 "arn:aws:s3:::csuneat-project-2/*",
                 "arn:aws:s3:::csuneat-project-2"
             ]
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": "ecr:CreateRepository",
-            "Resource": "*"
         }
     ]
 }
@@ -157,19 +140,30 @@ resource "aws_iam_policy" "PO" {
   description = "Bot Policy, Upload to S3"
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-     {
-         "Sid": "Stmt15807183600",
-         "Effect": "Allow",
-         "Action": [
-               "s3:PutObject" 
-         ],
-         "Resource": [
-               "*"
-         ]
-     }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "ecr:CreateRepository",
+                "ecr:GetAuthorizationToken"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:SetRepositoryPolicy",
+                "ecr:UploadLayerPart",
+                "ecr:InitiateLayerUpload",
+                "ecr:PutImage"
+            ],
+            "Resource": "arn:aws:ecr:*:*:repository/*"
+        }
+    ]
 }
 EOF
 }
