@@ -305,154 +305,24 @@ resource "aws_iam_policy" "LP" {
   name = "LP_Policy"
   path = "/"
   description = "Policy for lambda."
-  policy =<<EOF
+  policy=<<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "ecs:PutAttributes",
-                "lambda:TagResource",
-                "logs:DeleteSubscriptionFilter",
-                "ecs:UpdateContainerInstancesState",
-                "ecs:StartTask",
-                "logs:CreateLogStream",
-                "logs:TagLogGroup",
-                "ec2:CreateNetworkInterfacePermission",
-                "logs:DeleteRetentionPolicy",
-                "lambda:DeleteFunction",
-                "ecs:StopTask",
-                "ecs:DeregisterContainerInstance",
-                "s3:GetIpConfiguration",
-                "ecs:SubmitTaskStateChange",
-                "s3:GetBucketWebsite",
-                "lambda:InvokeFunction",
-                "ecs:DeleteCluster",
-                "s3:GetBucketNotification",
-                "s3:GetReplicationConfiguration",
-                "lambda:UpdateAlias",
-                "ecs:DescribeClusters",
-                "lambda:UpdateFunctionCode",
-                "logs:PutMetricFilter",
-                "ecs:StartTelemetrySession",
-                "s3:GetAnalyticsConfiguration",
-                "lambda:PublishVersion",
-                "logs:PutSubscriptionFilter",
-                "lambda:CreateAlias",
-                "s3:ListBucketByTags",
-                "s3:GetLifecycleConfiguration",
-                "s3:GetBucketTagging",
-                "s3:GetInventoryConfiguration",
-                "s3:ListBucketVersions",
-                "s3:GetBucketLogging",
-                "ecs:RegisterContainerInstance",
-                "lambda:InvokeAsync",
-                "s3:ListBucket",
-                "s3:GetAccelerateConfiguration",
-                "ecs:DeleteAttributes",
-                "lambda:UntagResource",
-                "s3:GetBucketPolicy",
-                "logs:DeleteLogStream",
-                "lambda:PutFunctionConcurrency",
-                "ecs:Poll",
-                "s3:GetEncryptionConfiguration",
-                "logs:CreateExportTask",
-                "logs:DeleteMetricFilter",
-                "ecs:RunTask",
-                "s3:GetBucketRequestPayment",
-                "s3:GetMetricsConfiguration",
-                "ecs:SubmitContainerStateChange",
-                "logs:AssociateKmsKey",
-                "ecs:DescribeContainerInstances",
-                "ecs:DescribeTasks",
-                "logs:DisassociateKmsKey",
-                "s3:ListBucketMultipartUploads",
-                "logs:UntagLogGroup",
-                "logs:DeleteLogGroup",
-                "lambda:UpdateFunctionConfiguration",
-                "s3:GetBucketVersioning",
-                "s3:GetBucketAcl",
-                "logs:PutLogEvents",
-                "s3:GetBucketCORS",
-                "ecs:UpdateContainerAgent",
-                "lambda:DeleteAlias",
-                "lambda:DeleteFunctionConcurrency",
-                "logs:PutRetentionPolicy",
-                "s3:GetBucketLocation"
-            ],
-            "Resource": [
-                "arn:aws:lambda:*:*:function:*",
-                "arn:aws:ec2:*:*:network-interface/*",
-                "arn:aws:s3:::*",
-                "arn:aws:ecs:*:*:task-definition/*:*",
-                "arn:aws:ecs:*:*:task/*",
-                "arn:aws:ecs:*:*:container-instance/*",
-                "arn:aws:ecs:*:*:cluster/*",
-                "arn:aws:logs:*:*:log-group:*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": [
-                "lambda:CreateFunction",
-                "lambda:CreateEventSourceMapping",
-                "ecs:DescribeTaskDefinition",
-                "ecs:DeregisterTaskDefinition",
-                "ecs:UpdateService",
-                "logs:DeleteResourcePolicy",
-                "ecs:CreateService",
-                "ec2:DeleteNetworkInterfacePermission",
-                "ec2:DescribeNetworkInterfaces",
-                "ec2:DescribeNetworkInterfaceAttribute",
-                "logs:CancelExportTask",
-                "ecs:RegisterTaskDefinition",
-                "ecs:DescribeServices",
-                "ec2:DescribeNetworkInterfacePermissions",
-                "s3:HeadBucket",
-                "logs:PutDestination",
-                "ecs:DiscoverPollEndpoint",
-                "ec2:DetachNetworkInterface",
-                "lambda:UpdateEventSourceMapping",
-                "logs:PutDestinationPolicy",
-                "ecs:CreateCluster",
-                "ec2:ModifyNetworkInterfaceAttribute",
-                "ec2:ResetNetworkInterfaceAttribute",
-                "ec2:DeleteNetworkInterface",
-                "ecs:DeleteService",
-                "logs:DeleteDestination",
-                "logs:CreateLogGroup",
-                "ec2:CreateNetworkInterface",
-                "logs:PutResourcePolicy",
-                "s3:ListAllMyBuckets",
-                "ec2:AttachNetworkInterface",
-                "lambda:DeleteEventSourceMapping"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObjectVersionTorrent",
-                "s3:GetObjectAcl",
-                "s3:GetObject",
-                "s3:GetObjectTorrent",
-                "s3:GetObjectVersionTagging",
-                "s3:GetObjectVersionAcl",
-                "s3:GetObjectTagging",
-                "s3:GetObjectVersionForReplication",
-                "logs:DeleteLogStream",
-                "logs:PutLogEvents",
-                "s3:GetObjectVersion",
-                "s3:ListMultipartUploadParts"
-            ],
-            "Resource": [
-                "arn:aws:logs:*:*:log-group:*:*:*",
-                "arn:aws:s3:::*/*"
-            ]
+      {
+        "Sid": "VisualEditor0",
+        "Effect": "Allow",
+        "Action": [
+          "s3:*",
+          "cloudwatch:*",
+          "logs:*",
+          "lambda:*",
+          "ecs:*",
+          "ecr:*",
+          "ec2:*",
+          "events:*"
+        ],
+        "Resource": "*"
         }
     ]
 }
@@ -461,20 +331,20 @@ EOF
 
 resource "aws_iam_role" "lambda-role"{
     name = "lambda-role"
-    
+
   assume_role_policy=<<EOF
 {
-  "Version": "2012-10-17", 
+  "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": "sts:AssumeRole", 
-      "Effect": "Allow", 
+      "Action": "sts:AssumeRole",
+      "Effect": "Allow",
       "Principal": {
         "Service": "lambda.amazonaws.com"
       }
     }
    ]
-} 
+}
 EOF
 
 }
@@ -492,12 +362,12 @@ resource "aws_lambda_function" "test-lambda" {
   handler          = "lambda.my_handler"
   source_code_hash = "${base64sha256(file("lambda.py.zip"))}"
   runtime          = "python3.6"
-  
+
   vpc_config {
     subnet_ids = ["${aws_subnet.privsubnet1.id}","${aws_subnet.privsubnet2.id}"]
     security_group_ids = ["${aws_security_group.NATSG.id}"]
   }
-  
+
   environment {
     variables = {
       foo = "bar"
@@ -523,6 +393,3 @@ resource "aws_lambda_permission" "allow_bucket" {
   principal     = "s3.amazonaws.com"
   source_arn    = "${aws_s3_bucket.bucket.arn}"
 }
-
-
-
