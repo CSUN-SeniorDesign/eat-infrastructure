@@ -1,6 +1,6 @@
 [
   {
-    "name": "first",
+    "name": "staging",
     "image": "service-first",
     "cpu": 10,
     "memory": 512,
@@ -13,7 +13,7 @@
     ]
   },
   {
-    "name": "second",
+    "name": "production",
     "image": "service-second",
     "cpu": 10,
     "memory": 256,
