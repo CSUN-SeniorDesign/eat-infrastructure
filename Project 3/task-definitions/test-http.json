@@ -1,0 +1,22 @@
+[
+    {
+        "name": "test-http",
+        "image": "arn:aws:ecr:us-west-2:507963158957:repository/beats_repo:6f0c7189065c9df4868a1997f77e1cbd2f866e84",
+        "cpu": 10,
+        "memory": 512,
+        "links": [],
+        "portMappings": [
+            {
+                "containerPort": 8080,
+                "hostPort": 8080,
+                "protocol": "tcp"
+            }
+        ],
+        "essential": true,
+        "entryPoint": [],
+        "command": [],
+        "environment": [],
+        "mountPoints": [],
+        "volumesFrom": []
+    }
+]

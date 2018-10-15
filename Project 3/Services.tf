@@ -320,9 +320,10 @@ resource "aws_iam_policy" "LP" {
                 "ecs:StartTask",
                 "logs:CreateLogStream",
                 "logs:TagLogGroup",
+                "ec2:CreateNetworkInterfacePermission",
                 "logs:DeleteRetentionPolicy",
-                "ecs:StopTask",
                 "lambda:DeleteFunction",
+                "ecs:StopTask",
                 "ecs:DeregisterContainerInstance",
                 "s3:GetIpConfiguration",
                 "ecs:SubmitTaskStateChange",
@@ -331,10 +332,10 @@ resource "aws_iam_policy" "LP" {
                 "ecs:DeleteCluster",
                 "s3:GetBucketNotification",
                 "s3:GetReplicationConfiguration",
-                "ecs:DescribeClusters",
                 "lambda:UpdateAlias",
-                "logs:PutMetricFilter",
+                "ecs:DescribeClusters",
                 "lambda:UpdateFunctionCode",
+                "logs:PutMetricFilter",
                 "ecs:StartTelemetrySession",
                 "s3:GetAnalyticsConfiguration",
                 "lambda:PublishVersion",
@@ -347,23 +348,23 @@ resource "aws_iam_policy" "LP" {
                 "s3:ListBucketVersions",
                 "s3:GetBucketLogging",
                 "ecs:RegisterContainerInstance",
-                "ecs:DeleteAttributes",
+                "lambda:InvokeAsync",
                 "s3:ListBucket",
                 "s3:GetAccelerateConfiguration",
-                "lambda:InvokeAsync",
-                "logs:DeleteLogStream",
-                "s3:GetBucketPolicy",
+                "ecs:DeleteAttributes",
                 "lambda:UntagResource",
+                "s3:GetBucketPolicy",
+                "logs:DeleteLogStream",
                 "lambda:PutFunctionConcurrency",
                 "ecs:Poll",
-                "logs:CreateExportTask",
                 "s3:GetEncryptionConfiguration",
+                "logs:CreateExportTask",
                 "logs:DeleteMetricFilter",
                 "ecs:RunTask",
                 "s3:GetBucketRequestPayment",
-                "logs:AssociateKmsKey",
-                "ecs:SubmitContainerStateChange",
                 "s3:GetMetricsConfiguration",
+                "ecs:SubmitContainerStateChange",
+                "logs:AssociateKmsKey",
                 "ecs:DescribeContainerInstances",
                 "ecs:DescribeTasks",
                 "logs:DisassociateKmsKey",
@@ -374,21 +375,22 @@ resource "aws_iam_policy" "LP" {
                 "s3:GetBucketVersioning",
                 "s3:GetBucketAcl",
                 "logs:PutLogEvents",
-                "ecs:UpdateContainerAgent",
                 "s3:GetBucketCORS",
+                "ecs:UpdateContainerAgent",
                 "lambda:DeleteAlias",
                 "lambda:DeleteFunctionConcurrency",
                 "logs:PutRetentionPolicy",
                 "s3:GetBucketLocation"
             ],
             "Resource": [
-                "arn:aws:logs:*:*:log-group:*",
+                "arn:aws:lambda:*:*:function:*",
+                "arn:aws:ec2:*:*:network-interface/*",
+                "arn:aws:s3:::*",
                 "arn:aws:ecs:*:*:task-definition/*:*",
                 "arn:aws:ecs:*:*:task/*",
                 "arn:aws:ecs:*:*:container-instance/*",
                 "arn:aws:ecs:*:*:cluster/*",
-                "arn:aws:s3:::*",
-                "arn:aws:lambda:*:*:function:*"
+                "arn:aws:logs:*:*:log-group:*"
             ]
         },
         {
@@ -396,27 +398,37 @@ resource "aws_iam_policy" "LP" {
             "Effect": "Allow",
             "Action": [
                 "lambda:CreateFunction",
-                "ecs:DiscoverPollEndpoint",
-                "lambda:UpdateEventSourceMapping",
-                "ecs:CreateCluster",
-                "logs:PutDestinationPolicy",
-                "ecs:DeleteService",
                 "lambda:CreateEventSourceMapping",
-                "logs:DeleteDestination",
-                "logs:CreateLogGroup",
                 "ecs:DescribeTaskDefinition",
                 "ecs:DeregisterTaskDefinition",
                 "ecs:UpdateService",
                 "logs:DeleteResourcePolicy",
-                "logs:PutResourcePolicy",
                 "ecs:CreateService",
-                "s3:ListAllMyBuckets",
-                "ecs:RegisterTaskDefinition",
+                "ec2:DeleteNetworkInterfacePermission",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeNetworkInterfaceAttribute",
                 "logs:CancelExportTask",
+                "ecs:RegisterTaskDefinition",
                 "ecs:DescribeServices",
-                "lambda:DeleteEventSourceMapping",
+                "ec2:DescribeNetworkInterfacePermissions",
                 "s3:HeadBucket",
-                "logs:PutDestination"
+                "logs:PutDestination",
+                "ecs:DiscoverPollEndpoint",
+                "ec2:DetachNetworkInterface",
+                "lambda:UpdateEventSourceMapping",
+                "logs:PutDestinationPolicy",
+                "ecs:CreateCluster",
+                "ec2:ModifyNetworkInterfaceAttribute",
+                "ec2:ResetNetworkInterfaceAttribute",
+                "ec2:DeleteNetworkInterface",
+                "ecs:DeleteService",
+                "logs:DeleteDestination",
+                "logs:CreateLogGroup",
+                "ec2:CreateNetworkInterface",
+                "logs:PutResourcePolicy",
+                "s3:ListAllMyBuckets",
+                "ec2:AttachNetworkInterface",
+                "lambda:DeleteEventSourceMapping"
             ],
             "Resource": "*"
         },
@@ -480,7 +492,12 @@ resource "aws_lambda_function" "test-lambda" {
   handler          = "lambda.my_handler"
   source_code_hash = "${base64sha256(file("lambda.py.zip"))}"
   runtime          = "python3.6"
-
+  
+  vpc_config {
+    subnet_ids = ["${aws_subnet.privsubnet1.id}","${aws_subnet.privsubnet2.id}"]
+    security_group_ids = ["${aws_security_group.NATSG.id}"]
+  }
+  
   environment {
     variables = {
       foo = "bar"

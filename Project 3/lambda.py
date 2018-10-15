@@ -39,7 +39,7 @@ def my_handler(event, context):
 
     the_object = event.get("Records")[0].get("s3").get("object")
     filename = the_object.get("key")
-
+    
     tag = getFile(bucket_name,filename,filename)
     containername
 
@@ -49,6 +49,8 @@ def my_handler(event, context):
         contianername = "staging"
 
     update(tag,containername)
+    
+    getFile(bucket_name,filename,filename)
 
 def getFile(bucket, filename, filepath):
     filepath = "/tmp/"+filepath
@@ -59,7 +61,7 @@ def getFile(bucket, filename, filepath):
     txt_file = open(filepath, "r")
     tag = txt_file.readline()
     txt_file.close()
-
+    
     return tag
 
 
