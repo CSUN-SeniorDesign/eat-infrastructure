@@ -137,7 +137,7 @@ data "aws_iam_policy" "policy" {
 resource "aws_iam_policy" "PO" {
   name = "PO_Policy"
   path = "/"
-  description = "Bot Policy, Upload to S3"
+  description = "Bot Policy for CircleCI"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -156,13 +156,21 @@ resource "aws_iam_policy" "PO" {
             "Sid": "VisualEditor1",
             "Effect": "Allow",
             "Action": [
-                "ecr:SetRepositoryPolicy",
-                "ecr:CompleteLayerUpload",
-                "ecr:DescribeRepositories",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchDeleteImage",
                 "ecr:UploadLayerPart",
                 "ecr:ListImages",
+                "ecr:DeleteRepository",
+                "ecr:PutImage",
+                "ecr:SetRepositoryPolicy",
+                "ecr:BatchGetImage",
+                "ecr:CompleteLayerUpload",
+                "ecr:DescribeImages",
+                "ecr:DescribeRepositories",
+                "ecr:DeleteRepositoryPolicy",
                 "ecr:InitiateLayerUpload",
-                "ecr:PutImage"
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetRepositoryPolicy"
             ],
             "Resource": "arn:aws:ecr:*:*:repository/*"
         }
