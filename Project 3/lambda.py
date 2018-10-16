@@ -42,21 +42,16 @@ def my_handler(event, context):
 
     tag = getFile(bucket_name,filename,filename)
     containername = ""
-    imagename = ""
 
     if filename == "ProductionSite.txt":
-        containername = "production"
-        imagename = "service-second"
+        containername = "beats-production"
     elif filename=="StagingSite.txt":
-        containername = "staging"
-        imagename = "service-first"
-
-
+        containername = "beats-staging"
 
     print(tag)
 
 
-    update(tag,containername,imagename)
+    update(tag,containername,tag)
 
 def getFile(bucket, filename, filepath):
     filepath = "/tmp/"+filepath
@@ -75,10 +70,13 @@ response = client.list_task_definitions(familyPrefix= 'demotask', status='ACTIVE
 
 #pprint.pprint(response['taskDefinitionArns'][3])
 def update(tag,containername,imagename):
-    print(imagename)
+    imagename = "507963158957.dkr.ecr.us-west-2.amazonaws.com/beats_repo:"+imagename
+    imagename = imagename.rstrip()
+
+    print("Image name is:##" +imagename +"##.")
     response = client.register_task_definition(
-        family='demotask',
-    #taskRoleArn='string',
+        family=containername,
+        #taskRoleArn='string',
         networkMode='bridge',
         containerDefinitions=[
             {
@@ -110,8 +108,8 @@ def update(tag,containername,imagename):
     taskDefinitionRev = response['taskDefinition']['family'] + ':' + str(response['taskDefinition']['revision'])
 #print taskDefinition
     response = client.update_service(
-        cluster='clusterdemo',
-        service='servicedemo',
+        cluster='beats-cluster',
+        service=containername,
         desiredCount=1,
         taskDefinition=taskDefinitionRev,
         deploymentConfiguration={
