@@ -29,7 +29,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   vpc_zone_identifier = ["${aws_subnet.privsubnet1.id}"]
   launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
   health_check_type = "ELB"
-  target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
+  target_group_arns = "${aws_alb_target_group.HTTP-Group.arn}"
 
 tag {
   key = "Name"
