@@ -21,7 +21,6 @@ create_before_destroy = true
 associate_public_ip_address = "false"
 }
 
-# ECS ASG
 resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   name = "ecs-autoscaling-group"
   max_size = "2"
@@ -30,6 +29,7 @@ resource "aws_autoscaling_group" "ecs-autoscaling-group" {
   vpc_zone_identifier = ["${aws_subnet.privsubnet1.id}"]
   launch_configuration = "${aws_launch_configuration.ecs-launch-configuration.name}"
   health_check_type = "ELB"
+  target_group_arn = ["${aws_alb_target_group.HTTP-Group.arn}"]
 
 tag {
   key = "Name"
@@ -40,4 +40,5 @@ tag {
 
 resource "aws_ecs_cluster" "beats-cluster" {
   name = "beats-cluster"
+  desired_capacity = "2"
 }
