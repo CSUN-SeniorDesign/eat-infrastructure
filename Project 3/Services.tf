@@ -54,7 +54,6 @@ resource "aws_alb_target_group_attachment" "HTTP-attachment-2" {
 
 }
 
-
 resource "aws_acm_certificate" "cert" {
 	domain_name = "fa480.club"
 	subject_alternative_names = ["*.fa480.club","*.staging.fa480.club"]
@@ -252,53 +251,6 @@ resource "aws_launch_configuration" "launch-config"{
   lifecycle {
     create_before_destroy = true
   }
-}
-
-resource "aws_autoscaling_group" "asg" {
-  name                 = "BEATS-ASG"
-  launch_configuration = "${aws_launch_configuration.launch-config.name}"
-  min_size             = "2"
-  max_size             = "2"
-  desired_capacity     = "2"
-  vpc_zone_identifier  = ["${aws_subnet.privsubnet1.id}"]
-  target_group_arns         = ["${aws_alb_target_group.HTTP-Group.arn}"]
-  initial_lifecycle_hook{
-     name = "BEATS-hook"
-     heartbeat_timeout = 1500
-     lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
-     default_result = "CONTINUE"
-
-     notification_metadata = <<EOF
-     {
-       "a": "b"
-     }
-     EOF
-
-     notification_target_arn = "arn:aws:sqs:us-west-2:1231231234:queue1*"
-     role_arn = "${aws_iam_role.IR.arn}"
-
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  timeouts {
-    delete = "30m"
-  }
-
-}
-
-resource "aws_autoscaling_policy" "asg_policy" {
-  name                   = "asg_policy"
-  autoscaling_group_name = "${aws_autoscaling_group.asg.name}"
-  policy_type = "TargetTrackingScaling"
-  target_tracking_configuration {
-  predefined_metric_specification {
-    predefined_metric_type = "ASGAverageCPUUtilization"
-  }
-  target_value = 40.0
-}
 }
 
 resource "aws_iam_policy" "LP" {
