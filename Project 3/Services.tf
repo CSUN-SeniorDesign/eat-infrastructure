@@ -30,29 +30,42 @@ resource "aws_alb_listener" "HTTPS-Listener"{
 	certificate_arn = "${aws_acm_certificate.cert.arn}"
 	default_action {
 		type = "forward"
-		target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
+		target_group_arn = "${aws_alb_target_group.production-HTTP-Group.arn}"
 	}
 }
 
-resource "aws_alb_target_group" "HTTP-Group" {
-  name     = "HTTP-Group"
+resource "aws_alb_target_group" "staging-HTTP-Group" {
+  name     = "staging-HTTP-Group"
   port     = 80
   protocol = "HTTP"
   vpc_id   = "${aws_vpc.main.id}"
+  depends_on = ["aws_lb.Load-Balancer"]
 }
 
-resource "aws_alb_target_group_attachment" "HTTP-attachment-1" {
-  target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
-  target_id        = "${aws_instance.web.id}"
-  port             = 80
+resource "aws_alb_target_group" "production-HTTP-Group" {
+  name     = "production-HTTP-Group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "${aws_vpc.main.id}"
+  depends_on = ["aws_lb.Load-Balancer"]
 }
 
-resource "aws_alb_target_group_attachment" "HTTP-attachment-2" {
-  target_group_arn = "${aws_alb_target_group.HTTP-Group.arn}"
-  target_id        = "${aws_instance.web2.id}"
-  port             = 80
 
+resource "aws_lb_listener_rule" "beats-staging" {
+  listener_arn = "${aws_alb_listener.HTTPS-Listener.arn}"
+  priority = 10
+  action = {
+    type = "forward"
+    target_group_arn = "${aws_alb_target_group.staging-HTTP-Group.id}"
+  }
+  condition = {
+    field = "host-header"
+    values = ["*staging.fa480.club"]
+  }
 }
+
+
+
 
 resource "aws_acm_certificate" "cert" {
 	domain_name = "fa480.club"
